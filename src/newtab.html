@@ -1,0 +1,273 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>New Tab</title>
+  <link rel="preload" href="fonts/InterVariable.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="theme.css">
+  <link rel="stylesheet" href="newtab.css">
+  <link rel="stylesheet" href="weather.css">
+  <link rel="stylesheet" href="backgrounds.css">
+  <link rel="stylesheet" href="widgets.css">
+  <link rel="stylesheet" href="settings.css">
+  <script src="backgrounds.js"></script>
+  <script src="settings.js"></script>
+</head>
+<body>
+  <div class="page" id="page">
+    <!-- The widget bar: a button per widget and, apart from them, Settings.
+         It sits above the header at the right edge of the page, so it stays in place
+         when widgets change the width of the header. First in the markup, so the
+         Tab order follows what is seen: bar, tiles, search. -->
+    <nav class="bar" aria-label="Widgets and settings">
+      <div id="onboard" class="onboard" role="note" hidden>
+        <span id="onboard-text">Mutemark shows your bookmarks bar. Widgets and settings are here.</span>
+        <button id="onboard-close" type="button" title="Dismiss" aria-label="Dismiss hint"><svg data-icon="x" viewBox="0 0 24 24" aria-hidden="true"></svg></button>
+      </div>
+      <div class="bar-widgets" id="bar-widgets" role="group" aria-label="Widgets">
+        <button class="bar-btn" type="button" data-widget="weather" data-tip="Weather" aria-label="Weather" aria-pressed="false"><svg data-icon="weather" viewBox="0 0 24 24" aria-hidden="true"></svg></button>
+        <button class="bar-btn" type="button" data-widget="clock" data-tip="Clock" aria-label="Clock" aria-pressed="false"><svg data-icon="clock" viewBox="0 0 24 24" aria-hidden="true"></svg></button>
+        <button class="bar-btn" type="button" data-widget="calendar" data-tip="Calendar" aria-label="Calendar" aria-pressed="false"><svg data-icon="calendar" viewBox="0 0 24 24" aria-hidden="true"></svg></button>
+        <button class="bar-btn" type="button" data-widget="world" data-tip="World clocks" aria-label="World clocks" aria-pressed="false"><svg data-icon="world" viewBox="0 0 24 24" aria-hidden="true"></svg></button>
+        <button class="bar-btn" type="button" data-widget="note" data-tip="Note" aria-label="Note" aria-pressed="false"><svg data-icon="note" viewBox="0 0 24 24" aria-hidden="true"></svg></button>
+        <button class="bar-btn" type="button" data-widget="timer" data-tip="Timer" aria-label="Timer" aria-pressed="false"><svg data-icon="timer" viewBox="0 0 24 24" aria-hidden="true"></svg></button>
+      </div>
+      <button id="gear" class="gear" type="button" data-tip="Settings" aria-label="Settings" aria-haspopup="dialog" aria-controls="settings" aria-expanded="false"><svg data-icon="settings" viewBox="0 0 24 24" aria-hidden="true"></svg></button>
+    </nav>
+
+    <header class="top" id="top">
+      <div class="top-in">
+        <div class="tiles" id="tiles">
+          <section class="tile weather" id="weather" aria-label="Weather">
+            <div class="tile-cap wx-cap">
+              <button id="wx-place" class="wx-place" type="button" title="Change location"></button>
+              <input id="wx-city" class="wx-city" type="text" placeholder="City or 51.51, -0.13" autocomplete="off" spellcheck="false" aria-label="City or coordinates" hidden>
+              <ul id="wx-suggest" class="wx-suggest" hidden></ul>
+              <span id="wx-desc" class="wx-desc"></span>
+              <a id="wx-credit" class="wx-credit" href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer" title="Weather data by Open-Meteo, CC BY 4.0" hidden>Open-Meteo</a>
+            </div>
+            <div class="wx-body">
+              <div class="wx-now" id="wx-now">
+                <svg id="wx-icon" class="wx-icon" viewBox="0 0 24 24" aria-hidden="true"></svg>
+                <span id="wx-temp" class="wx-temp"></span>
+              </div>
+              <ol id="wx-days" class="wx-days"></ol>
+            </div>
+          </section>
+
+          <section class="tile clock" id="w-clock" aria-label="Clock" hidden>
+            <div class="tile-cap"><span id="clock-date"></span></div>
+            <div class="clock-time"><span id="clock-time"></span><span id="clock-ampm" class="clock-ampm"></span></div>
+          </section>
+
+          <section class="tile cal" id="w-calendar" aria-label="Calendar" hidden>
+            <div class="tile-cap cal-cap">
+              <button id="cal-month" class="cap-btn cal-month" type="button" title="Back to this month"></button>
+              <span class="cap-tools">
+                <button id="cal-prev" class="cap-icon" type="button" title="Previous month" aria-label="Previous month"><svg data-icon="chevron-left" viewBox="0 0 24 24" aria-hidden="true"></svg></button>
+                <button id="cal-next" class="cap-icon" type="button" title="Next month" aria-label="Next month"><svg data-icon="chevron-right" viewBox="0 0 24 24" aria-hidden="true"></svg></button>
+              </span>
+            </div>
+            <table class="cal-grid" id="cal-grid"></table>
+          </section>
+
+          <section class="tile world" id="w-world" aria-label="World clocks" hidden>
+            <div class="tile-cap">
+              <span>World</span>
+              <span class="cap-tools">
+                <button id="zone-add" class="cap-icon" type="button" title="Add a city" aria-label="Add a city" aria-expanded="false" aria-controls="zone-pick"><svg data-icon="plus" viewBox="0 0 24 24" aria-hidden="true"></svg></button>
+              </span>
+            </div>
+            <ul id="zones" class="zones"></ul>
+            <div id="zone-pick" class="zone-pick" hidden>
+              <input id="zone-find" class="zone-find" type="text" placeholder="Search a city or time zone" autocomplete="off" spellcheck="false" aria-label="Search a time zone" aria-autocomplete="list" aria-controls="zone-list" aria-expanded="false">
+              <ul id="zone-list" class="zone-list" role="listbox" aria-label="Time zones"></ul>
+            </div>
+          </section>
+
+          <section class="tile note" id="w-note" aria-label="Note" hidden>
+            <div class="tile-cap"><label for="note-text">Note</label></div>
+            <textarea id="note-text" class="note-text" rows="3" maxlength="400" placeholder="A short note" spellcheck="false"></textarea>
+          </section>
+
+          <section class="tile timer" id="w-timer" aria-label="Timer" hidden>
+            <div class="tile-cap">
+              <span>Timer</span>
+              <span class="cap-tools">
+                <button id="timer-go" class="cap-icon" type="button" title="Start" aria-label="Start"><svg data-icon="play" viewBox="0 0 24 24" aria-hidden="true"></svg></button>
+                <button id="timer-reset" class="cap-icon" type="button" title="Reset" aria-label="Reset"><svg data-icon="reset" viewBox="0 0 24 24" aria-hidden="true"></svg></button>
+              </span>
+            </div>
+            <div class="timer-body">
+              <span id="timer-left" class="timer-left" role="timer" aria-live="off">25:00</span>
+              <div class="timer-presets" role="group" aria-label="Presets">
+                <button type="button" class="timer-preset" data-min="5">5</button>
+                <button type="button" class="timer-preset" data-min="15">15</button>
+                <button type="button" class="timer-preset" data-min="25">25</button>
+                <input id="timer-own" class="timer-own" type="text" inputmode="numeric" maxlength="5" placeholder="min" title="Minutes, or minutes:seconds. Enter starts." aria-label="Own time in minutes">
+              </div>
+            </div>
+          </section>
+        </div>
+
+        <label class="find">
+          <input id="find" type="text" placeholder="Find a bookmark" autocomplete="off" spellcheck="false" aria-label="Find a bookmark">
+          <span id="found" class="found"></span>
+          <kbd>/</kbd>
+        </label>
+      </div>
+
+    </header>
+
+    <main id="board" class="board"></main>
+
+    <div id="empty" class="empty" hidden>
+      <div id="empty-msg">
+        <p>No bookmarks yet</p>
+        <p class="hint">Press <kbd id="add-key">Ctrl+D</kbd> on any site to add it to the bookmarks bar</p>
+      </div>
+      <div id="folder-msg" hidden>
+        <p>This folder has no bookmarks</p>
+        <p class="hint">Add some, or choose another folder in Settings</p>
+      </div>
+      <div id="fail-msg" hidden>
+        <p>Could not read bookmarks</p>
+        <p class="hint">Open a new tab again. If that does not help, reload the extension on the browser's extensions page.</p>
+      </div>
+    </div>
+  </div>
+
+  <div id="menu" class="menu" role="menu" aria-label="Bookmark" tabindex="-1" hidden>
+    <button id="menu-open" type="button" role="menuitem" tabindex="-1">Open in new tab</button>
+    <button id="menu-copy" type="button" role="menuitem" tabindex="-1">Copy link</button>
+    <button id="menu-delete" type="button" role="menuitem" tabindex="-1" class="danger">Delete bookmark</button>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" aria-atomic="true" hidden>
+    <span id="toast-text">Bookmark deleted</span>
+    <button id="toast-undo" type="button">Undo</button>
+    <i id="toast-timer" class="toast-timer"></i>
+  </div>
+
+
+  <dialog id="settings" class="settings" aria-labelledby="settings-title">
+    <div class="set-head">
+      <h2 id="settings-title">Settings</h2>
+      <button id="settings-close" class="set-icon" type="button" title="Close" aria-label="Close settings"><svg data-icon="x" viewBox="0 0 24 24" aria-hidden="true"></svg></button>
+    </div>
+
+    <div class="set-body">
+      <section class="set-promise" aria-label="Privacy">
+        <p class="set-claim">Your bookmarks never leave your browser.</p>
+        <ul class="set-facts">
+          <li><b>0</b><span>own servers</span></li>
+          <li><b>0</b><span>trackers</span></li>
+          <li><b>0</b><span>accounts</span></li>
+        </ul>
+        <p class="set-fine">Weather asks Open-Meteo about the place you pick. Nothing else goes online.</p>
+      </section>
+
+      <fieldset class="set-row">
+        <legend>Theme</legend>
+        <div class="seg">
+          <label><input type="radio" name="theme" value="system"><span>System</span></label>
+          <label><input type="radio" name="theme" value="light"><span>Light</span></label>
+          <label><input type="radio" name="theme" value="dark"><span>Dark</span></label>
+        </div>
+        <p id="theme-note" class="set-note" hidden>Imported theme colors are in use. Reset them under More to choose a theme here.</p>
+      </fieldset>
+
+      <fieldset class="set-row">
+        <legend>Accent</legend>
+        <div class="swatches">
+          <label class="swatch sw-theme" title="Theme default"><input type="radio" name="accent" value="" aria-label="Theme default"></label>
+          <label class="swatch sw-blue" title="Blue"><input type="radio" name="accent" value="--blue" aria-label="Blue"></label>
+          <label class="swatch sw-green" title="Green"><input type="radio" name="accent" value="--green" aria-label="Green"></label>
+          <label class="swatch sw-yellow" title="Yellow"><input type="radio" name="accent" value="--yellow" aria-label="Yellow"></label>
+          <label class="swatch sw-magenta" title="Magenta"><input type="radio" name="accent" value="--magenta" aria-label="Magenta"></label>
+          <label class="swatch sw-cyan" title="Cyan"><input type="radio" name="accent" value="--cyan" aria-label="Cyan"></label>
+          <label class="swatch sw-red" title="Red"><input type="radio" name="accent" value="--red" aria-label="Red"></label>
+          <input id="accent-color" class="swatch accent-color" type="color" value="#7aa2c9" title="Custom color" aria-label="Custom accent color">
+        </div>
+      </fieldset>
+
+      <fieldset class="set-row">
+        <legend>Background</legend>
+        <div id="bg-grid" class="bg-grid">
+          <label class="bg-tile bg-gradient" title="Gradient"><input type="radio" name="background" value="gradient" aria-label="Gradient"></label>
+          <label class="bg-tile bg-solid" title="Solid color"><input type="radio" name="background" value="solid" aria-label="Solid color"></label>
+          <label class="bg-tile bg-own" id="bg-own" title="Your image"><input type="radio" name="background" value="image" aria-label="Your image"><svg data-icon="image-plus" viewBox="0 0 24 24" aria-hidden="true"></svg></label>
+        </div>
+        <p id="bg-credit" class="set-note bg-credit"></p>
+        <div id="bg-image" class="set-actions" hidden>
+          <button id="bg-choose" class="set-btn" type="button">Choose image</button>
+          <button id="bg-remove" class="set-btn" type="button" hidden>Remove</button>
+          <input id="bg-file" type="file" accept="image/png,image/jpeg,image/webp,image/avif,image/gif" hidden>
+        </div>
+        <p id="bg-note" class="set-note" hidden>Your image stays in this browser and is never uploaded.</p>
+      </fieldset>
+
+      <fieldset class="set-row">
+        <legend>Units and clock</legend>
+        <div class="set-pair">
+          <div class="seg" role="radiogroup" aria-label="Temperature">
+            <label><input type="radio" name="tempUnit" value="c"><span>°C</span></label>
+            <label><input type="radio" name="tempUnit" value="f"><span>°F</span></label>
+          </div>
+          <div class="seg" role="radiogroup" aria-label="Wind">
+            <label><input type="radio" name="windUnit" value="ms"><span>m/s</span></label>
+            <label><input type="radio" name="windUnit" value="kmh"><span>km/h</span></label>
+            <label><input type="radio" name="windUnit" value="mph"><span>mph</span></label>
+          </div>
+          <div class="seg" role="radiogroup" aria-label="Clock">
+            <label title="12-hour clock"><input type="radio" name="clock" value="12" aria-label="12-hour"><span>12h</span></label>
+            <label title="24-hour clock"><input type="radio" name="clock" value="24" aria-label="24-hour"><span>24h</span></label>
+          </div>
+        </div>
+      </fieldset>
+
+      <details class="set-more">
+        <summary>More</summary>
+        <div class="set-row">
+          <label class="set-label" for="start-folder">Start folder</label>
+          <select id="start-folder" class="set-select"></select>
+        </div>
+        <div class="set-row">
+          <span class="set-label" id="palette-label">Theme colors</span>
+          <div class="set-actions" role="group" aria-labelledby="palette-label">
+            <button id="palette-import" class="set-btn" type="button" aria-describedby="palette-note">Import Omarchy theme</button>
+            <button id="palette-reset" class="set-btn" type="button" hidden>Reset</button>
+            <input id="palette-file" type="file" accept=".toml,text/plain" hidden>
+          </div>
+          <p id="palette-note" class="set-note">A colors.toml or alacritty.toml. Only the hex colors are read.</p>
+        </div>
+        <p class="set-links">
+          <a href="https://github.com/stop-loss-enjoyer/mutemark/blob/main/PRIVACY.md" target="_blank" rel="noopener noreferrer">Privacy policy</a>
+          <a href="https://github.com/stop-loss-enjoyer/mutemark" target="_blank" rel="noopener noreferrer">Source code</a>
+          <a href="https://open-meteo.com/" target="_blank" rel="noopener noreferrer" title="CC BY 4.0">Weather data by Open-Meteo</a>
+        </p>
+      </details>
+
+      <div class="set-clear">
+        <button id="clear-ask" class="set-btn danger" type="button" aria-expanded="false" aria-controls="clear-confirm">Delete everything</button>
+        <div id="clear-confirm" class="set-confirm" role="group" aria-labelledby="clear-question" hidden>
+          <p id="clear-question">Delete all settings, widgets, the note, the weather place and your image? Bookmarks stay as they are.</p>
+          <div class="set-actions">
+            <button id="clear-yes" class="set-btn danger" type="button">Delete everything</button>
+            <button id="clear-no" class="set-btn" type="button">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="platform.js"></script>
+  <script src="weather-icons.js"></script>
+  <script src="icons.js"></script>
+  <script src="weather.js"></script>
+  <script src="widgets.js"></script>
+  <script src="newtab.js"></script>
+  <script src="panel.js"></script>
+</body>
+</html>

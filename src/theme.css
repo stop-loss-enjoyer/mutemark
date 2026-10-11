@@ -1,0 +1,25 @@
+/* Default palette. Every color on the page comes from these variables.
+   Each one holds a light and a dark value. Which one applies follows
+   color-scheme: the system setting by default, or the theme chosen in
+   Settings (newtab.css sets color-scheme from data-theme on <html>).
+   A custom theme only needs to redefine the variables, with one value each.
+   --wallpaper is an optional background image, none by default. */
+:root {
+  color-scheme: light dark;
+  --bg: light-dark(#f3f4f6, #15171c);
+  --bg-dark: light-dark(#e3e6eb, #0e1014);
+  --fg: light-dark(#23262d, #d9dde3);
+  --fg-dim: light-dark(#9aa0aa, #5b6270);
+  --selection: light-dark(#d5dae2, #2c313b);
+  /* The theme's own accent. Settings may replace --accent with another color. */
+  --theme-accent: light-dark(#3f6fa0, #7aa2c9);
+  --accent: var(--theme-accent);
+  --hot: light-dark(#c8572a, #e0875a);
+  --red: light-dark(#b44a4a, #d0716f);
+  --yellow: light-dark(#a87c1c, #d8b46a);
+  --green: light-dark(#4a8a4a, #8fbf8a);
+  --cyan: light-dark(#2f8585, #74b6b4);
+  --blue: light-dark(#3f6fa0, #7aa2c9);
+  --magenta: light-dark(#8a55a6, #b48ec8);
+  --wallpaper: none;
+}

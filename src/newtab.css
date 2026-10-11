@@ -1,0 +1,684 @@
+/* Inter ships with the extension (fonts/, SIL Open Font License), so the page looks
+   the same on every system and nothing is downloaded. One variable file covers every weight. */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: block;
+  src: url("fonts/InterVariable.woff2") format("woff2");
+}
+
+/* Sizes derive from variables that newtab.js sets for the window size:
+   --k scale, --unit row step, --gap gap, --cols and --col-w the card grid. */
+:root {
+  --k: 1;
+  --unit: 30px;
+  --gap: 14px;
+  --cols: 4;
+  --col-w: 260px;
+  --board-w: calc(var(--cols) * var(--col-w) + (var(--cols) - 1) * var(--gap));
+  --shade: color-mix(in srgb, var(--bg-dark) 75%, transparent);
+  /* Secondary text. 68% keeps small text above 4.5:1 on both default themes. */
+  --text-soft: color-mix(in srgb, var(--fg) 68%, transparent);
+  /* --hot as a text color. On a light theme a bright --hot looks pale on a light
+     background, so it is darkened with the text color. On a dark theme it is just --hot. */
+  --hot-text: light-dark(color-mix(in srgb, var(--hot) 35%, var(--fg)), var(--hot));
+}
+
+* { box-sizing: border-box; }
+
+/* Selected text in the theme colors, not the system blue. */
+::selection {
+  background: var(--selection);
+  color: var(--fg);
+}
+
+/* A theme chosen in Settings. Without data-theme the system setting applies.
+   The palette in theme.css follows color-scheme through light-dark(). */
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
+
+/* A calm gradient from the theme colors, no image by default. */
+html {
+  min-height: 100%;
+  background:
+    radial-gradient(120vw 90vh at 50% 0%,
+      color-mix(in srgb, var(--accent) 10%, transparent),
+      transparent 70%),
+    linear-gradient(180deg, var(--bg), var(--bg-dark));
+  background-attachment: fixed;
+}
+
+/* Solid background in Settings: the plain theme color. */
+:root[data-bg="solid"] { background: var(--bg); }
+
+body {
+  margin: 0;
+  /* html paints the background: an opaque body would hide the ::before and ::after layers. */
+  color: var(--fg);
+  font-family: "Inter", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Optional wallpaper from the theme (--wallpaper in theme.css), none by default.
+   It overflows the edges so that the blur does not fade out at the screen border. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: -3%;
+  z-index: -2;
+  background: var(--wallpaper, none) center / cover no-repeat;
+  filter: blur(3px) saturate(.9);
+}
+
+/* A veil in the theme background color: dims a wallpaper on a dark theme, lightens it on a light one. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(120vw 100vh at 50% 40%,
+      color-mix(in srgb, var(--bg) 30%, transparent),
+      color-mix(in srgb, var(--bg) 78%, transparent) 85%),
+    color-mix(in srgb, var(--bg) 25%, transparent);
+}
+
+.page {
+  /* Hidden until newtab.js lays out the bookmarks: the header scale depends on the layout. */
+  visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* The header starts at the same height for any number of bookmarks: the top padding
+     depends only on the window. Its own size follows the scale of the cards (--k).
+     Deleting, moving or adding a bookmark moves only the cards below. */
+  padding: clamp(20px, 11vh, 110px) clamp(16px, 3vw, 48px) clamp(20px, 4vh, 40px);
+  /* The header's narrow layout follows the width of the page (widgets.css, weather.css). */
+  container-type: inline-size;
+  /* The widget bar is placed against the page (widgets.css). */
+  position: relative;
+}
+
+.page.ready { visibility: visible; }
+
+[hidden] { display: none !important; }
+
+/* Header: weather and search. Sizes are multiplied by --k, so the header shrinks with the cards. */
+
+.top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: calc(24px * var(--k));
+  /* As wide as the cards, at least 460px (room for the week of weather even with
+     few cards), never wider than the window. */
+  width: min(100%, max(var(--board-w), 460px));
+  /* The search field lines up with the right edge of the cards. */
+  padding: 0 0 calc(clamp(12px, 2.4vh, 20px) * var(--k)) calc(4px * var(--k));
+  text-shadow: 0 1px 14px var(--shade);
+}
+
+/* Weather styles live in weather.css. */
+
+.find {
+  position: relative;
+  display: flex;
+  /* Stays at the right edge when the weather is turned off. */
+  margin-left: auto;
+  align-items: center;
+  width: min(calc(320px * var(--k)), 42%);
+  text-shadow: none;
+}
+
+.find input {
+  width: 100%;
+  height: calc(38px * var(--k));
+  padding: 0 calc(44px * var(--k)) 0 calc(14px * var(--k));
+  border: 1px solid color-mix(in srgb, var(--fg) 18%, transparent);
+  border-radius: calc(10px * var(--k));
+  outline: none;
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  box-shadow: 0 10px 28px -16px var(--shade);
+  color: var(--fg);
+  font: inherit;
+  font-size: calc(13.5px * var(--k));
+  transition: border-color .15s ease, background .15s ease;
+}
+
+.find input::placeholder { color: color-mix(in srgb, var(--fg) 58%, transparent); }
+
+.find input:focus {
+  border-color: color-mix(in srgb, var(--accent) 80%, transparent);
+  background: color-mix(in srgb, var(--bg) 92%, transparent);
+}
+
+/* Match count, at the right of the field. */
+.found {
+  position: absolute;
+  right: calc(12px * var(--k));
+  color: color-mix(in srgb, var(--fg) 55%, transparent);
+  font-size: max(10.5px, calc(12px * var(--k)));
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+}
+
+.find kbd {
+  position: absolute;
+  right: calc(9px * var(--k));
+  display: grid;
+  place-items: center;
+  width: calc(18px * var(--k));
+  height: calc(18px * var(--k));
+  border: 1px solid color-mix(in srgb, var(--fg) 18%, transparent);
+  border-radius: calc(5px * var(--k));
+  color: color-mix(in srgb, var(--fg) 50%, transparent);
+  font: 500 calc(11px * var(--k)) "Inter", sans-serif;
+  pointer-events: none;
+}
+
+/* Nothing to search without bookmarks: the weather moves to the center. */
+body.no-links .find { display: none; }
+/* No cards to line up with: the header takes the whole width and centers the weather. */
+body.no-links .top { justify-content: center; width: 100%; }
+
+.find input:focus ~ kbd,
+.find input:not(:placeholder-shown) ~ kbd,
+body.page-unfocused .find kbd { display: none; }
+
+/* Card grid. A grid row equals one bookmark row, so links in neighboring
+   cards line up. The board has its own scale --bk, which may be larger than
+   the header's --k: inside the board --k means the board scale. */
+
+.board,
+.board-foot { --k: var(--bk, 1); }
+
+.board {
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--col-w));
+  grid-auto-rows: var(--unit);
+  column-gap: var(--gap);
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  /* A card ends one gap before its rows end. The inner padding is the same for any row height:
+     the extra height of taller rows goes to the rows of bookmark plates (.links). */
+  margin-bottom: var(--gap);
+  padding: calc(12px * var(--k)) calc(8px * var(--k));
+  border: 1px solid color-mix(in srgb, var(--fg) 11%, transparent);
+  border-radius: calc(12px * var(--k));
+  background: color-mix(in srgb, var(--bg) 70%, transparent);
+}
+
+/* Group header: a small capital label, the count at the right. */
+.card h2 {
+  display: flex;
+  flex: none;
+  /* The label sits low, next to its bookmarks. The header height does not depend on the row height. */
+  align-items: flex-end;
+  gap: calc(10px * var(--k));
+  height: calc(22px * var(--k));
+  margin: 0;
+  padding: 0 calc(10px * var(--k)) calc(3px * var(--k));
+  line-height: 1.2;
+  color: var(--text-soft);
+  /* Text never gets smaller than this, even when the board is scaled down to fit. */
+  font-size: max(10px, calc(11px * var(--k)));
+  font-weight: 600;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+
+.card:not(.loose) h2 { cursor: grab; }
+
+.card .title {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.card .count {
+  flex: none;
+  color: color-mix(in srgb, var(--fg) 45%, transparent);
+  font-weight: 500;
+  letter-spacing: .04em;
+  font-variant-numeric: tabular-nums;
+}
+
+.card h2.menu-open .title { color: var(--fg); }
+
+.links {
+  display: grid;
+  flex: 1;
+  grid-auto-flow: column;
+  /* The rows share the height left in the card, the extra of a tall card goes to them. */
+  grid-template-rows: repeat(var(--link-rows), minmax(0, 1fr));
+  grid-template-columns: repeat(var(--span), minmax(0, 1fr));
+  column-gap: calc(6px * var(--k));
+}
+
+/* Each bookmark is a plate of its own, a little shorter than the row. */
+.link {
+  --plate: calc(var(--unit) * .84);
+  position: relative;
+  display: flex;
+  align-items: center;
+  align-self: center;
+  gap: calc(10px * var(--k));
+  min-width: 0;
+  height: var(--plate);
+  padding: 0 calc(10px * var(--k)) 0 calc(8px * var(--k));
+  border-radius: calc(8px * var(--k));
+  background: color-mix(in srgb, var(--fg) 5%, transparent);
+  color: color-mix(in srgb, var(--fg) 90%, transparent);
+  /* Readable when a big folder scales the board down. */
+  font-size: max(11.5px, calc(13.5px * var(--k)));
+  text-decoration: none;
+  transition: background-color .12s ease, box-shadow .12s ease, color .12s ease, opacity .12s ease;
+}
+
+.link:hover {
+  background: color-mix(in srgb, var(--fg) 10%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fg) 16%, transparent);
+  color: var(--fg);
+}
+
+.link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.link .icon,
+.link .letter {
+  flex: none;
+  width: calc(20px * var(--k));
+  height: calc(20px * var(--k));
+  border-radius: calc(5px * var(--k));
+}
+
+.link .icon {
+  background: center / contain no-repeat;
+  /* A faint light edge in dark themes, so black icons do not merge with the plate. */
+  filter: drop-shadow(0 0 1px light-dark(transparent, color-mix(in srgb, var(--fg) 60%, transparent)));
+}
+
+/* A letter instead of a site icon, in the text color. */
+.link .letter {
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--fg) 12%, transparent);
+  color: color-mix(in srgb, var(--fg) 82%, transparent);
+  font-size: calc(11px * var(--k));
+  font-weight: 600;
+  line-height: 1;
+}
+
+/* Name and address. The address wraps to a hidden second line when there is no room. */
+.link .label {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  min-width: 0;
+  height: var(--plate);
+  overflow: hidden;
+}
+
+.link .name,
+.link .host {
+  height: var(--plate);
+  line-height: var(--plate);
+  white-space: nowrap;
+}
+
+.link .name {
+  flex: 0 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.link .host {
+  flex: none;
+  margin-left: auto;
+  padding-left: calc(14px * var(--k));
+  color: color-mix(in srgb, var(--fg) 50%, transparent);
+  font-size: max(10px, calc(11.5px * var(--k)));
+  opacity: 0;
+  transition: opacity .12s ease;
+}
+
+.link:hover .host,
+.link:focus-visible .host,
+.link.current .host,
+.link.menu-open .host { opacity: 1; }
+
+body.dragging-now .link .host { opacity: 0; }
+.link.editing .host { display: none; }
+
+.link mark {
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--accent) 28%, transparent);
+  color: inherit;
+}
+
+.link.menu-open {
+  background: color-mix(in srgb, var(--fg) 12%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fg) 20%, transparent);
+  color: var(--fg);
+}
+
+/* An empty group: the place to drop bookmarks. */
+.links .placeholder {
+  display: flex;
+  align-items: center;
+  align-self: center;
+  height: calc(var(--unit) * .84);
+  padding: 0 calc(10px * var(--k));
+  border: 1px dashed color-mix(in srgb, var(--fg) 20%, transparent);
+  border-radius: calc(8px * var(--k));
+  color: color-mix(in srgb, var(--fg) 45%, transparent);
+  font-size: max(11px, calc(12.5px * var(--k)));
+}
+
+/* Name field, in place of a bookmark name or a group title. */
+.edit {
+  width: 100%;
+  min-width: 0;
+  height: calc(var(--unit) * .66);
+  margin: 0;
+  padding: 0 calc(6px * var(--k));
+  border: 1px solid var(--accent);
+  border-radius: calc(5px * var(--k));
+  outline: none;
+  background: var(--bg);
+  color: var(--fg);
+  font: inherit;
+  font-size: max(11.5px, calc(13px * var(--k)));
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.link .label:has(.edit) { flex-wrap: nowrap; }
+.link .name:has(.edit) { display: flex; flex: 1; align-items: center; overflow: visible; }
+
+/* Search: matches stay bright, the rest fades, the layout does not move. */
+
+body.finding .link:not(.match) { opacity: .25; }
+body.finding .card:not(.has-match) h2 { opacity: .4; }
+
+/* While searching, the hovered row is paler than usual so it does not compete with the current one. */
+body.finding .link.match:hover:not(.current) {
+  background: color-mix(in srgb, var(--fg) 8%, transparent);
+}
+
+/* The current row, which Enter opens: the accent ring. */
+.link.current {
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+  color: var(--fg);
+}
+
+/* No bookmarks: the message stands in the middle of the room under the header,
+   with New group under it. */
+body.no-links .page { min-height: 100vh; }
+
+.empty {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 0 6vh;
+  text-align: center;
+}
+
+.empty .board-foot {
+  justify-content: center;
+  width: auto;
+  margin-top: 22px;
+}
+
+.empty p {
+  margin: 0;
+  color: var(--fg);
+  font-size: 17px;
+  font-weight: 500;
+}
+
+.empty kbd {
+  padding: 1px 6px;
+  border: 1px solid color-mix(in srgb, var(--fg) 22%, transparent);
+  border-radius: 5px;
+  font: inherit;
+}
+
+.empty .hint {
+  margin-top: 8px;
+  color: var(--text-soft);
+  font-size: 13.5px;
+  font-weight: 400;
+}
+
+/* The line under the board: a quiet button for a new group, at the right edge of the cards. */
+
+.board-foot {
+  display: flex;
+  justify-content: flex-end;
+  width: min(100%, var(--board-w));
+  height: calc(26px * var(--k));
+}
+
+.new-group {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(7px * var(--k));
+  height: 100%;
+  padding: 0 calc(10px * var(--k));
+  border: 1px solid transparent;
+  border-radius: calc(7px * var(--k));
+  background: none;
+  /* Secondary text with the header's soft shade under it, so it reads on any picture. */
+  color: var(--text-soft);
+  font: inherit;
+  font-size: max(10px, calc(10.5px * var(--k)));
+  font-weight: 600;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 14px var(--shade);
+  cursor: pointer;
+  transition: color .12s ease, border-color .12s ease;
+}
+
+.new-group svg {
+  width: calc(12px * var(--k));
+  height: calc(12px * var(--k));
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+.new-group:hover {
+  border-color: color-mix(in srgb, var(--fg) 16%, transparent);
+  color: var(--fg);
+}
+
+.new-group:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+  color: var(--fg);
+}
+
+/* Drag and drop */
+
+body.dragging-now .link:hover {
+  background: color-mix(in srgb, var(--fg) 5%, transparent);
+  box-shadow: none;
+}
+
+.link.dragging,
+.card.dragging { opacity: .35; }
+
+body.dragging-card-now .card { cursor: grabbing; }
+
+.link.drop-before::after,
+.link.drop-after::after {
+  content: "";
+  position: absolute;
+  left: calc(6px * var(--k));
+  right: calc(6px * var(--k));
+  height: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+.link.drop-before::after { top: calc((var(--plate) - var(--unit)) / 2 - 1px); }
+.link.drop-after::after { bottom: calc((var(--plate) - var(--unit)) / 2 - 1px); }
+
+.card.drop-end {
+  border-color: var(--accent);
+}
+
+/* A group dropped here goes before or after this card: a line in the gap at that side. */
+.card.drop-card-before::after,
+.card.drop-card-after::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--accent);
+}
+
+.card.drop-card-before::after { left: calc(var(--gap) / -2 - 2px); }
+.card.drop-card-after::after { right: calc(var(--gap) / -2 - 2px); }
+
+/* Context menu */
+
+.menu {
+  position: fixed;
+  z-index: 10;
+  min-width: 200px;
+  padding: 4px;
+  border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--bg) 96%, var(--fg));
+}
+
+.menu button,
+.toast button {
+  border: none;
+  background: none;
+  color: var(--fg);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.menu button {
+  display: block;
+  width: 100%;
+  padding: 7px 12px;
+  border-radius: 6px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.menu button:hover,
+.menu button:focus-visible {
+  outline: none;
+  background: color-mix(in srgb, var(--fg) 9%, transparent);
+}
+
+.menu button:focus-visible { box-shadow: inset 0 0 0 1px var(--accent); }
+
+/* Opened with the mouse, the menu itself holds the focus (newtab.js), without a ring. */
+.menu:focus { outline: none; }
+
+/* Deleting is set apart by a thin line above it, not by color. */
+.menu .danger {
+  position: relative;
+  margin-top: 9px;
+}
+
+.menu .danger::before {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: 8px;
+  right: 8px;
+  height: 1px;
+  background: color-mix(in srgb, var(--fg) 12%, transparent);
+}
+
+/* Bar after a deletion, with Undo */
+
+.toast {
+  position: fixed;
+  overflow: hidden;
+  z-index: 10;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  max-width: 70vw;
+  padding: 9px 10px 9px 16px;
+  border: 1px solid color-mix(in srgb, var(--fg) 14%, transparent);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--bg) 96%, var(--fg));
+  font-size: 13px;
+}
+
+#toast-text {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.toast button {
+  flex: none;
+  padding: 5px 12px;
+  border: 1px solid color-mix(in srgb, var(--accent) 55%, transparent);
+  border-radius: 7px;
+  color: var(--fg);
+  font-weight: 500;
+}
+
+.toast button:hover { background: color-mix(in srgb, var(--accent) 16%, transparent); }
+
+.toast button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.toast:not(.undoable) button,
+.toast:not(.undoable) .toast-timer { display: none; }
+
+/* Countdown line while the deletion can still be undone. */
+.toast-timer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1px;
+  background: var(--accent);
+  transform-origin: left;
+}
+
+@keyframes countdown {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; }
+}

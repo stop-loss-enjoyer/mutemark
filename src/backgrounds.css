@@ -1,0 +1,43 @@
+/* Page background: the theme gradient, a solid theme color, a picture from the gallery
+   (backgrounds.js), the user's own picture or an Omarchy theme wallpaper.
+   settings.js sets data-bg and data-bg-tone on <html> and --wallpaper for a picture.
+   Loaded after newtab.css and refines its background rules. */
+
+/* Pictures from the gallery are shown sharp, they were chosen for it.
+   The user's own picture and a theme wallpaper keep the soft blur from newtab.css. */
+:root[data-bg="gallery"] body::before {
+  inset: 0;
+  filter: none;
+}
+
+/* A veil in the theme background color over a picture keeps the text readable.
+   It is light when the picture matches the theme (a dark picture under the dark theme)
+   and strong when it does not: then the theme color mostly covers the picture.
+   light-dark() picks the pair for the current theme. */
+:root[data-bg-tone="dark"] {
+  --veil-mid: light-dark(color-mix(in srgb, var(--bg) 72%, transparent), color-mix(in srgb, var(--bg) 26%, transparent));
+  --veil-edge: light-dark(color-mix(in srgb, var(--bg) 84%, transparent), color-mix(in srgb, var(--bg) 58%, transparent));
+}
+
+:root[data-bg-tone="light"] {
+  --veil-mid: light-dark(color-mix(in srgb, var(--bg) 30%, transparent), color-mix(in srgb, var(--bg) 70%, transparent));
+  --veil-edge: light-dark(color-mix(in srgb, var(--bg) 56%, transparent), color-mix(in srgb, var(--bg) 84%, transparent));
+}
+
+/* The band at the top is veiled a little more: the header's small captions and the
+   Open-Meteo credit stand there, often over a bright sky. */
+:root.has-wallpaper body::after {
+  background:
+    linear-gradient(180deg, color-mix(in srgb, var(--bg) 60%, transparent), transparent 36vh),
+    radial-gradient(120vw 100vh at 50% 40%, var(--veil-mid), var(--veil-edge) 85%);
+}
+
+/* Over a picture the cards are nearly solid: the picture does not show through the rows. */
+:root.has-wallpaper .card { background: color-mix(in srgb, var(--bg) 86%, transparent); }
+
+/* Without a picture there is nothing to veil. */
+:root:not(.has-wallpaper) body::after { display: none; }
+
+/* Small captions and the Open-Meteo credit (a license requirement) a step brighter
+   over a picture, where the veil alone may leave them faint. */
+:root.has-wallpaper :is(.tile-cap, .wx-credit) { color: color-mix(in srgb, var(--fg) 82%, transparent); }

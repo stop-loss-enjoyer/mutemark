@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128">
+  <!-- icon-16, 32 and 48 are drawn from this as is. icon-128 is drawn with the shape
+       wrapped in <g transform="translate(64 64) scale(0.857143) translate(-64 -64)">,
+       so it fits 96x96 with 16px of empty space on each side, as stores expect. -->
+  <path d="M32 8h64a8 8 0 0 1 8 8v100a4 4 0 0 1-6.4 3.2L64 96l-33.6 23.2A4 4 0 0 1 24 116V16a8 8 0 0 1 8-8z" fill="#5a7488"/>
+  <rect x="40" y="40" width="48" height="16" rx="8" fill="#f4f6f8"/>
+</svg>

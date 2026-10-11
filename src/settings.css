@@ -1,0 +1,519 @@
+/* Settings panel. Colors come from theme.css like the rest of the page.
+   Sizes do not follow --k: the panel keeps its size whatever the scale of the cards.
+   The gear and the first-run hint are in widgets.css with the widget bar. */
+
+.settings {
+  position: fixed;
+  inset: 0 0 0 auto;
+  width: min(380px, 100vw);
+  max-width: 100vw;
+  height: 100%;
+  max-height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: none;
+  border-left: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--fg);
+  font-family: "Inter", system-ui, sans-serif;
+  font-size: 13px;
+}
+
+.settings[open] {
+  display: flex;
+  flex-direction: column;
+  animation: settings-in .18s ease-out;
+}
+
+/* A light veil over the page: changes stay visible behind it. */
+.settings::backdrop { background: rgb(0 0 0 / 14%); }
+
+@keyframes settings-in {
+  from { transform: translateX(20px); opacity: 0; }
+}
+
+.settings ::selection {
+  background: var(--selection);
+  color: var(--fg);
+}
+
+.settings svg {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.set-head {
+  display: flex;
+  flex: none;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 14px 12px 24px;
+  border-bottom: 1px solid transparent;
+  transition: border-color .15s ease;
+}
+
+/* Scrolled: a line parts the title from the content passing under it. */
+.settings.scrolled .set-head { border-bottom-color: var(--line); }
+
+/* Section names, legends and the title share the caption style of the header. */
+.set-head h2,
+.settings legend,
+.set-label,
+.set-more summary {
+  color: var(--text-soft);
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: .14em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.set-head h2 { margin: 0; text-wrap: balance; }
+
+.set-icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: var(--text-soft);
+  cursor: pointer;
+}
+
+.set-icon:hover { background: color-mix(in srgb, var(--fg) 8%, transparent); color: var(--fg); }
+.set-icon svg { width: 16px; height: 16px; }
+
+.set-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0 24px 28px;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+}
+
+/* The promise: one sentence, three facts and one honest line. */
+.set-promise {
+  padding: 10px 0 18px;
+  border-bottom: 1px solid var(--line);
+}
+
+.set-claim {
+  margin: 0;
+  /* Lines of even length, never one word alone on the last. */
+  text-wrap: balance;
+  color: var(--fg);
+  font-size: 22px;
+  font-weight: 500;
+  letter-spacing: -.02em;
+  line-height: 1.2;
+}
+
+.set-facts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 11px;
+  margin: 14px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.set-facts li {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding-left: 11px;
+  border-left: 1px solid var(--line);
+}
+
+.set-facts li:first-child { padding-left: 0; border-left: none; }
+
+.set-facts b {
+  color: var(--fg);
+  font-size: 20px;
+  font-weight: 300;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.set-facts span {
+  color: var(--text-soft);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.set-fine {
+  margin: 16px 0 0;
+  color: var(--text-soft);
+  font-size: 11.5px;
+  line-height: 1.5;
+}
+
+.settings fieldset {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.settings .set-row { margin: 16px 0 0; }
+
+.settings legend,
+.set-label {
+  display: block;
+  margin: 0 0 10px;
+  padding: 0;
+}
+
+/* Segmented choice: radio buttons that look like one control, framed by a thin line. */
+.seg {
+  display: inline-flex;
+  flex-wrap: wrap;
+  padding: 2px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+}
+
+.seg label { position: relative; }
+
+.seg input,
+.swatch input,
+.bg-tile input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.seg span {
+  display: block;
+  padding: 5px 12px;
+  border-radius: 6px;
+  color: var(--text-soft);
+  font-size: 12.5px;
+  white-space: nowrap;
+  transition: background-color .12s ease, color .12s ease;
+}
+
+.seg label:hover span { color: var(--fg); }
+
+/* The chosen value is marked like a widget that is on in the widget bar:
+   a faint accent plate and a short accent line under the text. */
+.seg input:checked + span {
+  background: color-mix(in srgb, var(--accent) 15%, transparent);
+  color: var(--accent);
+}
+
+.seg input:checked + span::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 2px;
+  width: 10px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--accent);
+  transform: translateX(-50%);
+}
+
+.seg input:focus-visible + span {
+  outline: 1px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.seg input:disabled { cursor: default; }
+.seg input:disabled + span { opacity: .45; }
+.seg label:has(input:disabled):hover span { color: var(--text-soft); }
+
+.set-pair {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* Units and clock share a row: their choices are short, so is the space around them. */
+.set-pair .seg span { padding-inline: 8px; }
+
+/* Accent colors. */
+.swatches {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  padding: 3px;
+}
+
+.swatch {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--sw);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--fg) 16%, transparent);
+  cursor: pointer;
+}
+
+.swatch input { border-radius: 50%; }
+
+.swatch:has(input:checked),
+.accent-color.chosen {
+  box-shadow: 0 0 0 2px var(--surface), 0 0 0 3px var(--fg);
+}
+
+.swatch:has(input:focus-visible),
+.accent-color:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 5px;
+}
+
+/* The theme's own accent, half filled to tell it apart from the fixed colors. */
+.sw-theme {
+  --sw: var(--theme-accent, var(--accent));
+  background: linear-gradient(135deg, var(--sw) 50%, color-mix(in srgb, var(--sw) 35%, var(--bg)) 50%);
+}
+
+.sw-blue { --sw: var(--blue); }
+.sw-green { --sw: var(--green); }
+.sw-yellow { --sw: var(--yellow); }
+.sw-magenta { --sw: var(--magenta); }
+.sw-cyan { --sw: var(--cyan); }
+.sw-red { --sw: var(--red); }
+
+/* A custom color: a ring of hues until one is picked, then that color. */
+.accent-color {
+  appearance: none;
+  -webkit-appearance: none;
+  padding: 0;
+  border: none;
+  background: conic-gradient(#e06666, #e0c066, #7ec07e, #66c0c0, #6680e0, #c066c0, #e06666);
+}
+
+.accent-color::-webkit-color-swatch-wrapper { padding: 0; }
+.accent-color::-webkit-color-swatch { border: none; border-radius: 50%; }
+.accent-color::-moz-color-swatch { border: none; border-radius: 50%; }
+.accent-color:not(.chosen)::-webkit-color-swatch { opacity: 0; }
+.accent-color:not(.chosen)::-moz-color-swatch { opacity: 0; }
+
+/* Background gallery: pictures, then the theme gradient, the solid color and your own. */
+/* Small tiles, six to a row: the whole gallery takes three rows. */
+.bg-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.bg-tile {
+  position: relative;
+  display: grid;
+  place-items: center;
+  aspect-ratio: 3 / 2;
+  overflow: hidden;
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--fg) 6%, transparent);
+  box-shadow: inset 0 0 0 1px var(--line);
+  cursor: pointer;
+}
+
+.bg-tile img {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+/* Pictures are shown as they are, without the page's veil, so that they can be told
+   apart in either theme. The page itself shows the choice at once, veil and all. */
+
+.bg-tile svg {
+  width: 14px;
+  height: 14px;
+  color: var(--text-soft);
+  pointer-events: none;
+}
+
+.bg-own.filled svg { display: none; }
+
+.bg-gradient {
+  background:
+    radial-gradient(120% 90% at 50% 0%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%),
+    linear-gradient(180deg, var(--bg), var(--bg-dark));
+}
+
+.bg-solid { background: var(--bg); }
+
+.bg-tile:hover { box-shadow: inset 0 0 0 1px var(--line-strong); }
+
+/* The chosen one: a ring in the accent. */
+.bg-tile:has(input:checked)::after {
+  content: "";
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  border-radius: 5px;
+  box-shadow: inset 0 0 0 2px var(--accent), inset 0 0 0 3px color-mix(in srgb, var(--bg) 60%, transparent);
+  pointer-events: none;
+}
+
+.bg-tile:has(input:focus-visible) {
+  outline: 1px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.bg-credit a {
+  color: var(--fg);
+  text-decoration: underline 1px color-mix(in srgb, var(--fg) 30%, transparent);
+  text-underline-offset: 2px;
+}
+
+.bg-credit a:hover { text-decoration-color: var(--fg); }
+
+/* Buttons, fields, notes. */
+.set-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.bg-grid ~ .set-actions { margin-top: 10px; }
+
+.set-btn {
+  padding: 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: none;
+  color: var(--fg);
+  font: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+.set-btn:hover { border-color: var(--line-strong); background: color-mix(in srgb, var(--fg) 5%, transparent); }
+
+.set-btn.danger {
+  border-color: color-mix(in srgb, var(--hot) 40%, transparent);
+  color: var(--hot-text);
+}
+
+.set-btn.danger:hover { background: color-mix(in srgb, var(--hot) 10%, transparent); }
+
+:is(.set-icon, .set-btn, .set-links a, .bg-credit a, .set-more summary):focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.set-note {
+  margin: 8px 0 0;
+  color: var(--text-soft);
+  font-size: 11.5px;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.set-note:empty { display: none; }
+.set-note.error { color: var(--hot-text); }
+
+.set-select {
+  width: 100%;
+  min-width: 0;
+  height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  outline: none;
+  background: none;
+  color: var(--fg);
+  font: inherit;
+  font-size: 12.5px;
+}
+
+.set-select:focus-visible { border-color: var(--accent); }
+.set-select option { background: var(--bg); color: var(--fg); }
+
+/* More: the rarely needed things, folded away. */
+.set-more {
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.set-more summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: max-content;
+  cursor: pointer;
+  list-style: none;
+}
+
+.set-more summary::-webkit-details-marker { display: none; }
+
+.set-more summary::after {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: translateY(-2px) rotate(45deg);
+  transition: transform .15s ease;
+}
+
+.set-more[open] summary::after { transform: translateY(1px) rotate(-135deg); }
+.set-more summary:hover { color: var(--fg); }
+.set-more .set-row { margin-top: 18px; }
+
+.set-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 16px;
+  margin: 18px 0 0;
+  font-size: 12px;
+}
+
+.set-links a {
+  color: var(--text-soft);
+  text-decoration: none;
+}
+
+.set-links a:hover { color: var(--fg); text-decoration: underline 1px; text-underline-offset: 2px; }
+
+.set-clear {
+  margin-top: 26px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+
+.set-confirm {
+  padding: 12px;
+  border: 1px solid color-mix(in srgb, var(--hot) 35%, transparent);
+  border-radius: 8px;
+}
+
+.set-confirm p {
+  margin: 0 0 10px;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+/* A short window: tighter rows, so the panel does not need scrolling at 720px. */
+@media (max-height: 760px) {
+  .settings .set-row { margin-top: 10px; }
+  .set-body { padding-bottom: 20px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .settings[open] { animation: none; }
+}

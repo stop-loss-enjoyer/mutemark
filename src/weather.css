@@ -1,0 +1,259 @@
+/* The weather tile: a caption with the place, the condition and the data credit,
+   then the temperature now and a column per day. The tile frame and the caption
+   style are in widgets.css. Sizes are multiplied by --k like the whole header. */
+
+.weather {
+  opacity: 0;
+  transition: opacity .2s ease;
+}
+
+.weather.ready { opacity: 1; }
+
+.weather svg {
+  flex: none;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Caption: place, condition, and the credit at the right end. */
+.wx-cap { position: relative; }
+
+.wx-place {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: calc(5px * var(--k));
+  max-width: calc(170px * var(--k));
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--fg);
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
+}
+
+.wx-place span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wx-place svg {
+  width: calc(11px * var(--k));
+  height: calc(11px * var(--k));
+  stroke-width: 2;
+  color: var(--text-soft);
+}
+
+.wx-place:hover span { text-decoration: underline 1px color-mix(in srgb, var(--fg) 40%, transparent); text-underline-offset: 3px; }
+.wx-place:hover svg { color: var(--fg); }
+
+.wx-desc {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.wx-desc:not(:empty)::before {
+  content: "·";
+  margin-right: calc(7px * var(--k));
+}
+
+.weather.stale .wx-desc::after { content: " · offline"; }
+
+/* Visible attribution, required by the Open-Meteo data license (CC BY 4.0). */
+.wx-credit {
+  flex: none;
+  margin-left: auto;
+  padding-left: calc(14px * var(--k));
+  color: var(--text-soft);
+  text-decoration: none;
+}
+
+.wx-credit:hover { color: var(--fg); }
+
+/* The place field takes the caption while it is open. */
+.wx-city {
+  width: calc(210px * var(--k));
+  height: calc(18px * var(--k));
+  padding: 0;
+  border: none;
+  border-bottom: 1px solid var(--accent);
+  border-radius: 0;
+  outline: none;
+  background: none;
+  color: var(--fg);
+  font: inherit;
+  font-size: max(11px, calc(12px * var(--k)));
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.wx-city::placeholder { color: var(--text-soft); }
+
+/* City choices when the name is ambiguous. */
+.wx-suggest {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 6px * var(--k));
+  left: 0;
+  min-width: calc(260px * var(--k));
+  margin: 0;
+  padding: calc(4px * var(--k));
+  border: 1px solid var(--line);
+  border-radius: calc(8px * var(--k));
+  background: var(--surface);
+  list-style: none;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.wx-suggest button {
+  display: flex;
+  flex-direction: column;
+  gap: calc(2px * var(--k));
+  width: 100%;
+  padding: calc(6px * var(--k)) calc(10px * var(--k));
+  border: none;
+  border-radius: calc(5px * var(--k));
+  background: none;
+  color: var(--fg);
+  font: inherit;
+  font-size: max(11px, calc(12.5px * var(--k)));
+  text-align: left;
+  cursor: pointer;
+}
+
+.wx-suggest b { font-weight: 500; }
+.wx-suggest span { color: var(--text-soft); font-size: max(10px, calc(11px * var(--k))); }
+
+.wx-suggest button:hover,
+.wx-suggest button.current { background: color-mix(in srgb, var(--fg) 8%, transparent); }
+
+.wx-suggest button.current { box-shadow: inset 2px 0 0 var(--accent); }
+
+/* Now and the week. The week wraps below when the tile is squeezed. */
+.wx-body {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: calc(10px * var(--k)) calc(22px * var(--k));
+  min-height: var(--tile-body);
+}
+
+.wx-now {
+  display: flex;
+  align-items: center;
+  gap: calc(10px * var(--k));
+}
+
+.wx-icon {
+  width: calc(28px * var(--k));
+  height: calc(28px * var(--k));
+  color: var(--fg);
+}
+
+.wx-temp {
+  color: var(--fg);
+  font-size: var(--big);
+  font-weight: 300;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -.035em;
+  line-height: 1;
+}
+
+/* No forecast yet: the large line asks for a place and opens the field on a click. */
+.weather.no-data .wx-now { cursor: pointer; }
+.weather.no-data .wx-icon { color: var(--text-soft); }
+
+.weather.no-data .wx-temp {
+  color: var(--text-soft);
+  font-size: max(13px, calc(15px * var(--k)));
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.weather.no-data .wx-now:hover .wx-temp,
+.weather.no-data .wx-now:hover .wx-icon { color: var(--fg); }
+
+.wx-days {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.wx-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: calc(5px * var(--k));
+  /* Its text has a floor (max() below), so the column has one too: on a small header
+     the days would otherwise run into each other. */
+  width: max(46px, calc(54px * var(--k)));
+  padding: calc(5px * var(--k)) 0 calc(4px * var(--k));
+  border-radius: calc(6px * var(--k));
+  font-size: max(10px, calc(11.5px * var(--k)));
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  cursor: default;
+}
+
+.wx-day:hover { background: color-mix(in srgb, var(--fg) 6%, transparent); }
+
+.wx-name {
+  color: var(--text-soft);
+  font-size: max(9px, calc(9.5px * var(--k)));
+  font-weight: 500;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.wx-day.today .wx-name { color: var(--fg); }
+
+.wx-day svg {
+  width: calc(17px * var(--k));
+  height: calc(17px * var(--k));
+  color: var(--fg);
+}
+
+.wx-temps {
+  display: flex;
+  gap: calc(5px * var(--k));
+}
+
+.wx-temps b { color: var(--fg); font-weight: 500; }
+.wx-temps i { color: var(--text-soft); font-style: normal; }
+
+/* Chance of precipitation: the space is always kept so the columns stay even. */
+.wx-rain {
+  min-height: max(8.5px, calc(9px * var(--k)));
+  color: var(--text-soft);
+  font-size: max(8.5px, calc(9.5px * var(--k)));
+  line-height: 1;
+}
+
+/* While the forecast loads, the tile keeps the size it will have: the days are there,
+   unseen, so the header and the cards under it do not move when the answer comes. */
+.weather.pending .wx-now,
+.weather.pending .wx-days,
+.weather.pending .wx-credit { visibility: hidden; }
+
+/* Small scale (--k under 0.8, many widgets on a small window): five days instead of seven.
+   A width computed from --k does it, so the header measures the same at every scale it is tried
+   at: it is zero below 0.8 and far above the natural width, hence the natural one, from there on. */
+.wx-day:nth-child(n+6) {
+  overflow: hidden;
+  width: clamp(0px, calc((var(--k) - 0.8) * 100000px), max(46px, calc(54px * var(--k))));
+  padding-inline: 0;
+}
+
+/* Narrow page: five days instead of seven, each with its high and low on one line. */
+@container (max-width: 760px) {
+  .wx-day { flex: none; width: auto; min-width: calc(52px * var(--k)); padding-inline: calc(3px * var(--k)); }
+  .wx-day:nth-child(n+6) { display: none; }
+}
