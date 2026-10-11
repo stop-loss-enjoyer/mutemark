@@ -1,6 +1,8 @@
 # Mutemark
 
-A new tab page for Chromium browsers and Firefox that shows your bookmarks as a card for each folder.
+A new tab page that shows the bookmarks you already have, a card for each folder. That is all it does.
+
+Install it, open a new tab, and your bookmarks are there. Nothing to sign up for and nothing to set up. Mutemark only runs while a new tab is open: it has no background process, does not touch the pages you visit, sends no notifications and never moves your bookmarks unless you do. If you remove it, your bookmarks stay exactly where they were, because they never lived in Mutemark.
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="docs/screenshot-dark.png">
@@ -8,9 +10,20 @@ A new tab page for Chromium browsers and Firefox that shows your bookmarks as a 
   <img alt="Mutemark: bookmarks as cards on a new tab page" src="docs/screenshot-dark.png">
 </picture>
 
+## Browser support
+
+| Browser | Support | Notes |
+|---|---|---|
+| Chrome, Brave, Edge (Chromium family) | Yes, version 123 or later | Site icons from the local icon cache. |
+| Vivaldi | Untested | Chromium based, so it should work. Vivaldi may show its own start page instead of the new tab page. |
+| Firefox (desktop) | Yes, version 140 or later | Firefox ESR 140 is supported. No site icons, because Firefox gives extensions no icon cache. Bookmarks show a letter. Nothing is fetched from the sites. |
+| Safari | No | Safari has no bookmarks API for extensions. |
+| Opera | No | Opera does not allow an extension to replace the new tab page. |
+| Firefox for Android | No | Firefox for Android does not allow an extension to replace the new tab page. |
+
 ## Your bookmarks never leave your browser
 
-- No account, no analytics, no servers of ours.
+- No account, no analytics, no telemetry, no tracking, no servers of ours. Mutemark does not know who you are and counts nothing.
 - Your bookmarks are read locally and every edit is written to the browser's own bookmarks.
 - The only network requests go to two Open-Meteo hosts, only while the weather widget is on and you have chosen a place (or are searching for one). The forecast is refreshed at most every 20 minutes while a new tab is open.
 - The extension's Content Security Policy allows `connect-src` for those two hosts and nothing else, so the browser itself blocks any other request.
@@ -62,17 +75,6 @@ Mutemark has no account, no analytics and no servers of its own. Your bookmarks 
 - **Browser-enforced guarantee.** The extension's Content Security Policy allows `connect-src` only for those two hosts. The browser itself blocks any other request from the extension pages.
 
 See [PRIVACY.md](PRIVACY.md) for the full policy.
-
-## Browser support
-
-| Browser | Support | Notes |
-|---|---|---|
-| Chrome, Brave, Edge (Chromium family) | Yes, version 123 or later | Site icons from the local icon cache. |
-| Vivaldi | Untested | Chromium based, so it should work. Vivaldi may show its own start page instead of the new tab page. |
-| Firefox (desktop) | Yes, version 140 or later | Firefox ESR 140 is supported. No site icons, because Firefox gives extensions no icon cache. Bookmarks show a letter. Nothing is fetched from the sites. |
-| Safari | No | Safari has no bookmarks API for extensions. |
-| Opera | No | Opera does not allow an extension to replace the new tab page. |
-| Firefox for Android | No | Firefox for Android does not allow an extension to replace the new tab page. |
 
 ## Install
 
