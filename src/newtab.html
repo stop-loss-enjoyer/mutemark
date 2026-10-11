@@ -16,11 +16,16 @@
 </head>
 <body>
   <div class="page" id="page">
-    <!-- The widget bar: a button per widget and, apart from them, Settings.
-         It sits above the header at the right edge of the page, so it stays in place
-         when widgets change the width of the header. First in the markup, so the
-         Tab order follows what is seen: bar, tiles, search. -->
-    <nav class="bar" aria-label="Widgets and settings">
+    <!-- The bar above the header: the search field at the left, a button per widget and,
+         apart from them, Settings at the right. It does not depend on the tiles, so
+         nothing in it moves when widgets change. First in the markup, in the order it is
+         seen, so the Tab order follows: search, hint, widget buttons, Settings, then the tiles. -->
+    <nav class="bar" aria-label="Search, widgets and settings">
+      <label class="find">
+        <input id="find" type="text" placeholder="Find a bookmark" autocomplete="off" spellcheck="false" aria-label="Find a bookmark">
+        <span id="found" class="found"></span>
+        <kbd>/</kbd>
+      </label>
       <div id="onboard" class="onboard" role="note" hidden>
         <span id="onboard-text">Mutemark shows your bookmarks bar. Widgets and settings are here.</span>
         <button id="onboard-close" type="button" title="Dismiss" aria-label="Dismiss hint"><svg data-icon="x" viewBox="0 0 24 24" aria-hidden="true"></svg></button>
@@ -110,12 +115,6 @@
             </div>
           </section>
         </div>
-
-        <label class="find">
-          <input id="find" type="text" placeholder="Find a bookmark" autocomplete="off" spellcheck="false" aria-label="Find a bookmark">
-          <span id="found" class="found"></span>
-          <kbd>/</kbd>
-        </label>
       </div>
 
     </header>

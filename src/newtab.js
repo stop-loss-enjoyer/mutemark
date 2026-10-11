@@ -199,7 +199,8 @@ function hostOf(url) {
 // DOMParser makes an inert document: no scripts run, nothing loads.
 function decodeEntities(text) {
   if (!text.includes("&")) return text;
-  const doc = new DOMParser().parseFromString(text, "text/html");
+  // A literal "<" is escaped first, or the parser takes "<notes>" for a tag and drops it.
+  const doc = new DOMParser().parseFromString(text.replace(/</g, "&lt;"), "text/html");
   return doc.documentElement.textContent || text;
 }
 
@@ -536,31 +537,22 @@ function restorePlans(saved, oldId, newId) {
 }
 
 // Header tiles that do not fit in one row are spread evenly over the rows, instead of
-// filling the first rows and leaving one tile alone in the last, far from the search field.
+// filling the first rows and leaving one tile alone in the last.
 // The rows stay as few as when they wrap on their own. A row ends with an empty element
 // as wide as the row (.row-break). Without one, the rows wrap as they come.
 function arrangeHeader() {
   const box = topEl.querySelector(".top-in");
-  const findBox = topEl.querySelector(".find");
   for (const br of box.querySelectorAll(".row-break")) br.remove();
   const tiles = [...box.querySelectorAll(".tile")].filter((tile) => tile.offsetWidth > 0);
   if (tiles.length < 3) return;
-  const outer = (el) => {
-    const style = getComputedStyle(el);
-    return el.getBoundingClientRect().width + parseFloat(style.marginRight) +
-      (style.marginLeft.endsWith("px") && el !== findBox ? parseFloat(style.marginLeft) : 0);
-  };
-  const widths = tiles.map(outer);
-  // On a narrow page the search field has a row of its own (widgets.css).
-  const ownRow = getComputedStyle(findBox).flexBasis === "100%";
-  const search = ownRow ? 0 : outer(findBox);
+  const widths = tiles.map((tile) => tile.getBoundingClientRect().width + parseFloat(getComputedStyle(tile).marginRight));
   const room = box.clientWidth + 0.5;
-  const rowOf = (from, to, last) => widths.slice(from, to).reduce((a, b) => a + b, 0) + (last ? search : 0);
+  const rowOf = (from, to) => widths.slice(from, to).reduce((a, b) => a + b, 0);
 
   // The rows as they wrap on their own.
   let rows = 1;
   let used = 0;
-  for (const w of [...widths, ...(search ? [search] : [])]) {
+  for (const w of widths) {
     if (used && used + w > room) {
       rows++;
       used = 0;
@@ -576,7 +568,7 @@ function arrangeHeader() {
     if (left === 1) {
       const all = [...acc, start];
       const ends = [...all.slice(1), tiles.length];
-      const sizes = all.map((from, i) => rowOf(from, ends[i], i === all.length - 1));
+      const sizes = all.map((from, i) => rowOf(from, ends[i]));
       const widest = Math.max(...sizes);
       if (sizes.every((size) => size <= room) && widest < bestWidth - 0.5) {
         bestWidth = widest;
@@ -738,7 +730,6 @@ function renderLink(bookmark) {
 
   const host = hostOf(bookmark.url);
   const name = decodeEntities(bookmark.title || "").trim() || host;
-  link.title = `${name}\n${bookmark.url}`;
   link.dataset.letter = letterOf(name);
 
   // The site icon is a background, not an <img>: while it loads, or if there is none,
@@ -788,7 +779,6 @@ function renderCard(section, place) {
   const head = document.createElement("h2");
   if (!section.loose) {
     head.draggable = true;
-    head.title = "Drag to move the group, double-click to rename";
   }
   const title = document.createElement("span");
   title.className = "title";
@@ -1447,7 +1437,7 @@ window.addEventListener("focus", updateFocusHint);
 window.addEventListener("blur", updateFocusHint);
 updateFocusHint();
 
-// Any printable key except space starts a search, and so does "/". Keys are read by code so any layout works.
+// Any printable key except space starts a search, and so does "/". Characters are read as typed, and "/" and Ctrl+Z also by key position, so any layout works.
 document.addEventListener("keydown", (event) => {
   // The settings panel is a modal dialog with keys of its own (panel.js).
   if (settingsEl.open) return;
@@ -1457,8 +1447,11 @@ document.addEventListener("keydown", (event) => {
   }
   // The open menu takes the arrow keys itself, letters do not start a search there.
   if (event.target instanceof Element && event.target.closest("#menu")) return;
-  // Ctrl+Z restores the bookmark just deleted.
-  if ((event.ctrlKey || event.metaKey) && event.code === "KeyZ" && removed &&
+  // Ctrl+Z restores the bookmark just deleted. A Latin layout is read by the letter
+  // (so QWERTZ and AZERTY follow the printed Z), any other layout by the key position.
+  const latin = /^[a-z]$/i.test(event.key);
+  const isZ = latin ? event.key.toLowerCase() === "z" : event.code === "KeyZ";
+  if ((event.ctrlKey || event.metaKey) && isZ && removed &&
       (document.activeElement !== findEl || !findEl.value)) {
     event.preventDefault();
     undoRemove();
@@ -1709,7 +1702,10 @@ async function deleteLink(id) {
   await load();
   showToast(`Deleted: ${decodeEntities(node.title || "") || hostOf(node.url)}`, async () => {
     try {
-      await api.bookmarks.create(entry);
+      // Other bookmarks may have come or gone meanwhile, and Chromium rejects an index past the end.
+      await api.bookmarks.get(entry.parentId);
+      const siblings = await api.bookmarks.getChildren(entry.parentId);
+      await api.bookmarks.create({ ...entry, index: Math.min(entry.index, siblings.length) });
     } catch {
       // The folder was deleted while the bar was showing: restore to the folder on the page.
       if (!homeId) throw new Error("no folder to restore to");
@@ -1742,14 +1738,20 @@ async function deleteGroup(folderId) {
   await load();
   const name = decodeEntities(folder.title || "") || "group";
   showToast(`Deleted group: ${name}`, async () => {
-    const group = await api.bookmarks.create({ parentId: folder.parentId, index: folder.index, title: folder.title });
+    const siblings = await api.bookmarks.getChildren(folder.parentId);
+    const group = await api.bookmarks.create({
+      parentId: folder.parentId,
+      index: Math.min(folder.index, siblings.length),
+      title: folder.title,
+    });
     // The folder made again has a new id: the layouts from before point to it, so every card
     // goes back to where it was.
     restorePlans(plans, folderId, group.id);
-    for (const [i, child] of children.entries()) {
-      // A bookmark deleted meanwhile stays deleted, the rest go back.
+    for (const child of children) {
+      // A bookmark deleted meanwhile stays deleted, the rest go back. With no index each one
+      // is appended, so a missing one cannot make the later moves fail.
       try {
-        await api.bookmarks.move(child.id, { parentId: group.id, index: i });
+        await api.bookmarks.move(child.id, { parentId: group.id });
       } catch {}
     }
   });
@@ -1948,10 +1950,18 @@ function nearestLink(card, x, y) {
   return bestDist <= NEAR_PX ? best : null;
 }
 
+// index is a slot counted before the item is taken out. Firefox wants the final position,
+// so a move down inside the same folder lands one slot earlier there.
+async function moveTo(id, parentId, index) {
+  const [node] = await api.bookmarks.get(id);
+  if (IS_FIREFOX && node?.parentId === parentId && node.index < index) index--;
+  await api.bookmarks.move(id, { parentId, index });
+}
+
 document.addEventListener("drop", async (event) => {
   if (!dragId && !dragFolderId) return;
   // The search field takes a dropped address itself, the bookmark does not move then.
-  if (event.target instanceof Element && event.target.closest(".top")) {
+  if (event.target instanceof Element && event.target.closest(".top, .find")) {
     endDrag();
     return;
   }
@@ -1969,15 +1979,12 @@ document.addEventListener("drop", async (event) => {
         // The loose card is the start folder itself: the group becomes its first folder.
         await api.bookmarks.move(id, { parentId: anchor.id, index: 0 });
       } else {
-        await api.bookmarks.move(id, { parentId: anchor.parentId, index: anchor.index + (target.after ? 1 : 0) });
+        await moveTo(id, anchor.parentId, anchor.index + (target.after ? 1 : 0));
       }
     } else if (target.linkId) {
       const [anchor] = await api.bookmarks.get(target.linkId);
       if (!anchor?.parentId) throw new Error("bookmark not found");
-      await api.bookmarks.move(id, {
-        parentId: anchor.parentId,
-        index: anchor.index + (target.after ? 1 : 0),
-      });
+      await moveTo(id, anchor.parentId, anchor.index + (target.after ? 1 : 0));
     } else if (target.folderId) {
       await api.bookmarks.move(id, { parentId: target.folderId });
     }

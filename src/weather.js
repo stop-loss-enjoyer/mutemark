@@ -446,8 +446,12 @@ async function refreshWeather(force = false) {
     }
   } catch (error) {
     console.warn("weather:", error);
-    if (cached) renderWeather(cached, true);
-    else renderNoWeather(currentPlace()?.name ?? "Weather", "Unavailable");
+    // The saved forecast is shown only for the place that is chosen now, never for an earlier one.
+    const place = currentPlace();
+    const same = cached && place &&
+      roundCoord(cached.place?.lat) === place.lat && roundCoord(cached.place?.lon) === place.lon;
+    if (same) renderWeather(cached, true);
+    else renderNoWeather(place?.name ?? "Weather", "Unavailable");
   }
   // Weather may have been turned off while the request was on its way.
   if (!settings.weather) return;

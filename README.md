@@ -15,12 +15,12 @@ A new tab page for Chromium browsers and Firefox that shows your bookmarks as a 
 - The only network requests go to two Open-Meteo hosts, only while the weather widget is on and you have chosen a place (or are searching for one). The forecast is refreshed at most every 20 minutes while a new tab is open.
 - The extension's Content Security Policy allows `connect-src` for those two hosts and nothing else, so the browser itself blocks any other request.
 - Permissions: `bookmarks`, and `favicon` in Chromium. No host permissions.
-- Plain HTML, CSS and JavaScript, no bundler and no libraries. What you read here is what runs.
+- Plain HTML, CSS and JavaScript: no bundler, no minification, no libraries. The build script only copies files, merges the manifest and zips, so what you read here is what runs.
 
 ## Features
 
 - Bookmarks as cards, one card for each folder inside the start folder (the bookmarks bar by default), in a masonry-style layout that fits the window and remembers where each card sits. Bookmarks that sit directly in the start folder get the first card, bookmarks in deeper folders join the card of their top folder. A long folder is split into columns inside its card. Few bookmarks get larger rows, many get smaller ones, so the board fills the window without scrolling where it can. An empty folder gets a card that says Drag bookmarks here. A card shows up to 60 bookmarks: for a bigger folder its counter reads, for example, 60 of 75, and the bookmarks past the 60th are neither shown nor found by search. Move some of them into another folder next to it, which gets a card of its own.
-- Type to search. Matches names, addresses, folder names and initials, and also text typed on the wrong keyboard layout. When a new tab opens, the browser keeps the focus in the address bar and the field says Click to search: click the page once, then type.
+- Type to search, in the field at the top left, level with the cards. Matches names, addresses, folder names and initials, and also text typed on the wrong keyboard layout. When a new tab opens, the browser keeps the focus in the address bar and the field says Click to search: click the page once, then type.
 - Drag and drop to reorder bookmarks or move them between folders. Every change is written to the browser's own bookmarks.
 - Right-click a bookmark for Open in new tab, Copy link, Rename and Delete. A deletion can be undone for 10 seconds.
 - Groups are bookmark folders. New group, under the right edge of the board, makes a folder in the start folder and asks for its name. Rename a group by double-clicking its title or from its menu. Drag a group by its title to move it. Delete group moves everything in it, subfolders too, into the folder above in the group's place, removes the folder and offers Undo, which puts it all back in the old order. The first card, with the bookmarks that sit directly in the start folder, cannot be renamed, deleted or moved.
@@ -32,7 +32,6 @@ A new tab page for Chromium browsers and Firefox that shows your bookmarks as a 
   - **Timer:** 5, 15 or 25 minutes, or your own time (`10` or `1:30`), with pause and reset. At the end it rings once, with a single bell strike played in the page by one tab only, without a sound file, a notification or a permission. It works only while a new tab stays open: close the tab and it will not ring. A tab that stays in the background for a long time may ring up to a minute late, because the browser slows its timers.
 - Weather: current conditions and a 7-day forecast from Open-Meteo, for a place you choose yourself in the header. A search shows its matches to choose from, even when there is only one. Nothing is requested until you search for or choose a place. Clearing the place field and pressing Enter forgets the place.
 - Light and dark themes, an accent color, and a background: one of 13 photos that ship with the extension (public domain or CC0), the theme gradient, a solid color or your own image. A veil in the theme color keeps text readable on any of them, and gets stronger when a light picture meets the dark theme or the other way round.
-- Plain HTML, CSS and JavaScript. No bundler, no minification, no libraries: the build script only copies files, merges the manifest and zips. What you read in this repository is what runs in your browser.
 
 ## Settings
 
@@ -70,7 +69,7 @@ See [PRIVACY.md](PRIVACY.md) for the full policy.
 |---|---|---|
 | Chrome, Brave, Edge (Chromium family) | Yes, version 123 or later | Site icons from the local icon cache. |
 | Vivaldi | Untested | Chromium based, so it should work. Vivaldi may show its own start page instead of the new tab page. |
-| Firefox (desktop) | Yes, version 142 or later | Firefox ESR 140 is too old. No site icons, because Firefox gives extensions no icon cache. Bookmarks show a letter. Nothing is fetched from the sites. |
+| Firefox (desktop) | Yes, version 140 or later | Firefox ESR 140 is supported. No site icons, because Firefox gives extensions no icon cache. Bookmarks show a letter. Nothing is fetched from the sites. |
 | Safari | No | Safari has no bookmarks API for extensions. |
 | Opera | No | Opera does not allow an extension to replace the new tab page. |
 | Firefox for Android | No | Firefox for Android does not allow an extension to replace the new tab page. |
@@ -81,18 +80,34 @@ Download the zip for your browser from the [latest release](https://github.com/s
 
 **Chrome, Brave, Edge** (Vivaldi should work but is untested)
 
-1. Unzip the Chromium package into a folder you will keep.
+1. Unzip the Chromium package into a new, empty folder with a fixed name that you keep. The zip has no top-level folder, so name the target: `unzip mutemark-chromium-1.0.1.zip -d mutemark`.
 2. Open the browser's extensions page and turn on Developer mode.
-3. Choose Load unpacked and select the folder.
+3. Choose Load unpacked and select that folder, the one with `manifest.json` directly inside.
+
+Do not move or rename the folder afterwards. The browser ties the extension's settings, note, timer, place and your own image to the folder's path, so a moved folder loads as a new, empty extension.
 
 **Firefox**
 
 Firefox installs only signed extensions, and this one is not signed yet. Until it is published on addons.mozilla.org, there are two ways:
 
 - **Regular Firefox, temporarily.** Open `about:debugging#/runtime/this-firefox`, choose Load Temporary Add-on and select the Firefox zip, or the `manifest.json` inside the unzipped folder. A temporary add-on is removed when Firefox restarts.
-- **Firefox Developer Edition or Nightly, permanently.** Open `about:config`, set `xpinstall.signatures.required` to `false`, then open `about:addons`, choose the gear, Install Add-on From File, and select the Firefox zip. Regular and ESR releases ignore this setting.
+- **Firefox Developer Edition, Nightly or an unbranded build, permanently.** Open `about:config`, set `xpinstall.signatures.required` to `false`, then open `about:addons`, choose the gear, Install Add-on From File, and select the Firefox zip. Release and Beta builds ignore this setting. ESR honours it and is supported too (Firefox 140 or later).
 
 To build the packages yourself instead, see Build below.
+
+### First run
+
+The first time you open a new tab, the browser may ask whether to keep the change made by the extension. Choose Keep (in Firefox, Keep changes), because the other choice turns Mutemark off. In Firefox, Mutemark replaces the New Tab page only: the Home page stays as set in Settings, Home.
+
+### Update
+
+- **Chrome, Brave, Edge:** delete the old files in the folder you loaded (otherwise files of the old version stay behind), unzip the new package into that same folder, then press Reload on the extensions page. Do not load the new version from another folder: the browser would treat it as a separate extension, without your settings, note and image.
+- **Firefox, permanent install:** open `about:addons`, choose the gear, Install Add-on From File, and select the new zip. It replaces the old version, because the add-on id stays the same.
+- **Firefox, temporary install:** load the new zip again from `about:debugging`.
+
+### Uninstall
+
+Remove the extension on the browser's extensions page. This also deletes everything it stored (see Privacy).
 
 ## Build
 
@@ -108,7 +123,7 @@ An optional script in [contrib/omarchy](contrib/omarchy) copies the colors and w
 
 ## License
 
-PolyForm Noncommercial 1.0.0. See [LICENSE](LICENSE) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). You can use Mutemark, read the code, change it for yourself and pass it on, for any purpose that is not commercial. Commercial use, including selling it or building it into a product that is sold, needs a separate license.
+PolyForm Noncommercial 1.0.0 (SPDX: `PolyForm-Noncommercial-1.0.0`). See [LICENSE](LICENSE) and [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). You can use Mutemark, read the code, change it for yourself and pass it on, for any purpose that is not commercial. Commercial use, including selling it or building it into a product that is sold, needs a separate license.
 
 For a commercial license, or to talk about the project itself, write to sl.enjoyer@pm.me
 

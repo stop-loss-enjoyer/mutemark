@@ -5,6 +5,16 @@
 // Both return promises in Manifest V3, so no polyfill is needed.
 const api = globalThis.browser ?? globalThis.chrome;
 
+// Firefox and Chromium disagree about bookmarks.move(): the index is the final
+// position in Firefox, and the position before the item is taken out in Chromium.
+const IS_FIREFOX = (() => {
+  try {
+    return api.runtime.getURL("").startsWith("moz-extension:");
+  } catch {
+    return false;
+  }
+})();
+
 // Site icons come from the browser's own local icon cache (`/_favicon/`).
 // Only Chromium has it, and only with the "favicon" permission, which only
 // the Chromium build declares. Elsewhere bookmarks show a letter instead.

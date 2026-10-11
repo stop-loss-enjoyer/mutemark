@@ -59,12 +59,27 @@ else
 fi
 
 awk -v wallpaper="$wallpaper_css" '
-  /^\[/ { section = $0; next }
-  /^[a-z_]+ *=/ {
-    key = $1
-    val = $NF
-    gsub(/"/, "", val)
-    store[section key] = val
+  /^[ \t]*\[/ { section = $0; sub(/^[ \t]+/, "", section); sub(/[ \t]*(#.*)?$/, "", section); next }
+  /^[ \t]*[a-z_]+[ \t]*=/ {
+    # Split on the first "=", so values with spaces or comments do not shift the fields.
+    eq = index($0, "=")
+    key = substr($0, 1, eq - 1)
+    val = substr($0, eq + 1)
+    gsub(/[ \t]/, "", key)
+    sub(/^[ \t]+/, "", val)
+    # Take the quoted text (either quote style), which drops a trailing comment after the
+    # closing quote. An unquoted value ends at the first space or "#".
+    if (match(val, /^"[^"]*"/) || match(val, /^\047[^\047]*\047/)) {
+      val = substr(val, 2, RLENGTH - 2)
+    } else {
+      sub(/[ \t#].*$/, "", val)
+    }
+    # Only hex colors are accepted. Anything else leaves the fallback in place.
+    if (val ~ /^#[0-9a-fA-F]+$/ && (length(val) == 4 || length(val) == 7 || length(val) == 9)) {
+      store[section key] = val
+    } else if (key == "mode" && (val == "light" || val == "dark")) {
+      store[section key] = val
+    }
   }
   function pick(a, b, fallback) {
     if (store[a] != "") return store[a]

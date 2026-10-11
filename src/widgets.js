@@ -71,7 +71,7 @@
   // nor undo a deleted bookmark (newtab.js listens on the document). Escape leaves the field.
   headerEl.addEventListener("keydown", (event) => {
     const field = event.target;
-    if (!(field instanceof HTMLElement) || !field.matches("textarea, input") || field.id === "find") return;
+    if (!(field instanceof HTMLElement) || !field.matches("textarea, input")) return;
     event.stopPropagation();
     if (event.key === "Escape" && !event.defaultPrevented) field.blur();
   });
@@ -134,6 +134,7 @@
     if (!document.hidden) {
       minuteTick();
       renderTimer();
+      syncNote();
     }
   });
 
@@ -440,8 +441,22 @@
     }
   }
 
-  noteEl.value = readNote();
+  // The text this tab last read or wrote. While the field still holds it, the user has not
+  // typed here since, so a change made in another tab can safely replace it.
+  let noteSynced = readNote();
+  noteEl.value = noteSynced;
+
+  function syncNote() {
+    const remote = readNote();
+    if (remote === noteSynced) return;
+    if (document.activeElement !== noteEl || noteEl.value === noteSynced) {
+      noteEl.value = remote;
+      noteSynced = remote;
+    }
+  }
+
   noteEl.addEventListener("input", () => {
+    noteSynced = noteEl.value;
     try {
       if (noteEl.value) localStorage.setItem(NOTE_KEY, noteEl.value);
       else localStorage.removeItem(NOTE_KEY);
@@ -599,7 +614,7 @@
       syncTimerTick();
     }
     if (event.key === NOTE_KEY || event.key === null) {
-      if (document.activeElement !== noteEl) noteEl.value = readNote();
+      syncNote();
     }
   });
 
@@ -676,39 +691,8 @@
     if (changed.includes("zones")) renderZones();
   });
 
-  /* Search field next to the tiles */
-
-  // Alone in the row, the search field sits at the right edge (widgets.css). When the tiles
-  // wrap, that leaves a gap between the last tile and the field: then it follows the last
-  // tile instead. data-place tells the stylesheet which case it is: "right", "follow", "own".
-  const findBox = headerEl.querySelector(".find");
-  let placeFrame = 0;
-  function placeFind() {
-    placeFrame = 0;
-    const shown = [...headerEl.querySelectorAll(".tile")].filter((tile) => tile.offsetWidth > 0);
-    let place = "right";
-    if (shown.length && findBox.offsetWidth > 0) {
-      const top = (el) => el.getBoundingClientRect().top;
-      const first = top(shown[0]);
-      const last = top(shown[shown.length - 1]);
-      if (top(findBox) > last + 2) place = "own";
-      else if (last > first + 2) place = "follow";
-    }
-    if (findBox.dataset.place !== place) findBox.dataset.place = place;
-  }
-  const schedulePlaceFind = () => {
-    if (!placeFrame) placeFrame = requestAnimationFrame(placeFind);
-  };
-  const topInEl = headerEl.querySelector(".top-in");
-  new ResizeObserver(schedulePlaceFind).observe(topInEl);
-  new MutationObserver(schedulePlaceFind).observe(topInEl, { childList: true });
-  new MutationObserver(schedulePlaceFind).observe(headerEl, { attributes: true, attributeFilter: ["style"] });
-  document.addEventListener("mutemark:settings", schedulePlaceFind);
-  window.addEventListener("resize", schedulePlaceFind);
-
   applyWidgets();
   minuteTick();
-  schedulePlaceFind();
   // The buttons are drawn as they are first, transitions come after (widgets.css).
   requestAnimationFrame(() => requestAnimationFrame(() => document.querySelector(".bar")?.classList.add("settled")));
 })();

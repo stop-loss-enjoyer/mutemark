@@ -1,6 +1,6 @@
 # Omarchy integration (optional)
 
-Most people do not need this script. Settings in Mutemark has Import Omarchy theme under More, which reads the colors of a theme file in any build, packaged or not. On Omarchy the current theme's file is `~/.local/state/omarchy/current/theme/colors.toml` (older themes have `alacritty.toml` there instead). The script below also copies the wallpaper and repeats the import by itself after each theme change, but only works for an unpacked build.
+Most people do not need this script. Settings in Mutemark has Import Omarchy theme under More, which reads the colors of a theme file in any build, packaged or not. On Omarchy the current theme's file is `~/.local/state/omarchy/current/theme/colors.toml` (older themes have `alacritty.toml` there instead). The script below also copies the wallpaper, but only works for an unpacked build, and you run it again after each theme change.
 
 `update-theme.sh` copies the colors and wallpaper of your current Omarchy theme into an unpacked Mutemark build, so the new tab matches your desktop.
 
@@ -21,6 +21,6 @@ The script refuses any folder without a `manifest.json`, and `src/` in particula
 
 The written colors have one value each, so with them the Theme switch in Settings (System, Light, Dark) no longer changes the colors. To return to the default palette, run `./build.sh` again.
 
-The script only reads files under `~/.local/state/omarchy/current`. It does not touch the network.
+The script reads the current theme's `colors.toml` or `alacritty.toml` (or the palette file you pass as the second argument) and the wallpaper that `~/.local/state/omarchy/current/background` points to, which may be in `~/.config/omarchy/backgrounds/`. It does not touch the network.
 
 The wallpaper belongs to the theme's author and is copied only onto your own machine. Do not commit or redistribute it. `background.jpg` is in `.gitignore`, and `build.sh` leaves it out of the packages.

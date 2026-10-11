@@ -18,7 +18,17 @@ jobs:
           node-version: "22"
       - name: build both packages
         run: ./build.sh
+      # The Android warning is a false positive: the add-on is desktop only, so it
+      # must not declare gecko_android, which would offer it on Firefox for Android.
       - name: lint the Firefox build
-        run: npx --yes web-ext@10.7.0 lint --source-dir dist/firefox
+        run: |
+          npx --yes web-ext@10.7.0 lint --output=json --source-dir dist/firefox > lint.json || true
+          python3 -I -c "
+          import json, sys
+          r = json.load(open('lint.json'))
+          bad = r['errors'] + [w for w in r['warnings'] if w['code'] != 'KEY_FIREFOX_ANDROID_UNSUPPORTED_BY_MIN_VERSION']
+          for m in bad: print(m['code'], m['message'])
+          sys.exit(1 if bad else 0)
+          "
       - name: permissions and CSP stay minimal
         run: python3 -I tools/check_manifests.py

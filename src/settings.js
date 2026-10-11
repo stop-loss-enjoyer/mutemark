@@ -263,6 +263,8 @@ async function applyWallpaper() {
   } catch {}
   // The setting may have changed while the database was read.
   if (effectiveBackground() !== "image") return false;
+  // Another call may have made its own URL while the database was read, release it first.
+  if (wallpaperUrl) URL.revokeObjectURL(wallpaperUrl);
   wallpaperUrl = blob instanceof Blob ? URL.createObjectURL(blob) : null;
   setUrl(wallpaperUrl);
   return Boolean(wallpaperUrl);

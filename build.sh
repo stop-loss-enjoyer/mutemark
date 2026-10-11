@@ -62,12 +62,17 @@ for browser in "${browsers[@]}"; do
   mkdir -p "$out"
 
   # Everything under src/ except the manifest parts, the icon source drawing, hidden files
-  # and a theme wallpaper (contrib/omarchy writes one into builds, never into src/).
+  # (also those inside hidden folders) and a theme wallpaper (contrib/omarchy writes one
+  # into builds, never into src/).
   (cd "$src" && find . -type f \
-      ! -name 'manifest.*.json' ! -path './icons/*.svg' ! -name '.*' ! -name '*~' \
+      ! -name 'manifest.*.json' ! -path './icons/*.svg' ! -path '*/.*' ! -name '*~' \
       ! -name 'background.jpg' \
       -print0 | xargs -0 -I{} cp --parents {} "$out/")
   merge_manifest "$browser" "$out/manifest.json"
+
+  # The package carries its own license terms and the third-party notices (the ISC text
+  # for the Lucide icons must travel with the icon code).
+  cp "$root/LICENSE" "$root/THIRD_PARTY_NOTICES.md" "$out/"
 
   if [[ -n "${SOURCE_DATE_EPOCH:-}" ]]; then
     find "$out" -exec touch -h -d "@$SOURCE_DATE_EPOCH" {} +

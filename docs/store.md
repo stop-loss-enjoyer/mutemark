@@ -1,6 +1,6 @@
 # Store listing texts
 
-Texts for Chrome Web Store, Firefox Add-ons (AMO) and Edge Add-ons. Do not add personal details to them. Contact and support: GitHub issues. Privacy policy URL: the rendered PRIVACY.md in the repository.
+Texts for Chrome Web Store, Firefox Add-ons (AMO) and Edge Add-ons. Do not add personal details to them. Contact and support: sl.enjoyer@pm.me, and GitHub issues. Privacy policy URL: the rendered PRIVACY.md in the repository.
 
 ## Name
 

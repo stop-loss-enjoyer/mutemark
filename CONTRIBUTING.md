@@ -11,7 +11,7 @@ Mutemark is a privacy-first extension. The rules below protect that promise, and
 5. **Permissions stay minimal.** `bookmarks` and, in Chromium, `favicon`. No host permissions, no `tabs`, no `history`. Adding a permission needs a clear reason.
 6. **English only** in code comments, interface text and documents. Keyboard layout tables in `src/newtab.js` are data, not text.
 7. **No long dashes** (the em dash and the en dash) anywhere. Use a comma, a period or a colon.
-8. **No external fonts, scripts or images.** Everything the page loads ships in the package. The one font is Inter, bundled in `src/fonts/` under the SIL Open Font License (see THIRD_PARTY_NOTICES.md). Do not add another typeface.
+8. **No external fonts, scripts or images.** Everything the page loads ships in the package. The one font is Inter, bundled in `src/fonts/` under the SIL Open Font License (see THIRD_PARTY_NOTICES.md, which ships in each package). Do not add another typeface.
 9. **Keep it small.** Fewer features done well beat many features to maintain.
 
 ## Development
@@ -26,7 +26,7 @@ New icons come from Lucide, the same version as the others (lucide-static 0.460.
 
 A new key in `localStorage` or IndexedDB goes into the list in PRIVACY.md. Delete everything in Settings clears all of `localStorage` and the IndexedDB database, so new keys are covered by it.
 
-Before publishing a build, check the package contents with `unzip -l dist/mutemark-chromium-*.zip`: only the files of `src/` and the merged `manifest.json`, no `manifest.base.json`, no `icons/*.svg`, no `background.jpg`.
+Before publishing a build, check the package contents with `unzip -l dist/mutemark-chromium-*.zip`: only the files of `src/`, the merged `manifest.json`, `LICENSE` and `THIRD_PARTY_NOTICES.md`, no `manifest.base.json`, no `icons/*.svg`, no `background.jpg`.
 
 ## Code from outside
 

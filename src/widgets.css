@@ -1,4 +1,4 @@
-/* Header: the widget tiles, the search field and the widget bar above them.
+/* Header: the widget tiles, and the bar above them with the search field and the widget buttons.
    Loaded after newtab.css and replaces its header rules. Sizes inside the header are
    multiplied by --k (newtab.js sets it), so the header shrinks with the cards;
    the widget bar keeps its size. */
@@ -31,19 +31,19 @@
   text-shadow: none;
 }
 
-/* Tiles and the search field flow in one line of rows, the search field last, at the
-   right edge of the last row: next to the tiles when they fit in one row, next to the
-   last ones when they wrap.
-   Each tile has a 1px line on its left. The first tile of every row sits at the very left
+/* The tiles flow in rows. The search field is not among them (it stands in the bar), so
+   it never moves when widgets are switched on or off.
+   Each tile has a 1px line on its left, as tall as its row: the tiles of a row stretch to
+   the tallest one, their content stays at the top. The first tile of every row sits at the very left
    of the box, where the clip cuts its line off, so lines only ever stand between two tiles.
    The clip reaches far out on the other sides for open lists. It makes the box a layer of
-   its own, in which the open lists (z-index) stand above the search field. */
+   its own, in which the open lists (z-index) stand above the cards. */
 .top-in {
   position: relative;
   z-index: 2;
   display: flex;
   flex-wrap: wrap;
-  align-items: flex-start;
+  align-items: stretch;
   /* The space between rows is a margin under each item, taken back under the last row:
      a row-gap would also stand around the empty line of a .row-break. */
   row-gap: 0;
@@ -55,7 +55,6 @@
 
 .tiles { display: contents; }
 
-.top-in > .find,
 .tile { margin-bottom: calc(18px * var(--k)); }
 
 /* The end of a row of tiles, set by newtab.js when it spreads them over the rows:
@@ -353,9 +352,16 @@ body.no-widgets .tiles { display: none; }
 
 /* Note */
 
+/* A fixed width like the other tiles: the field fills it and never grows into free space.
+   The tile's padding and line are part of the width. */
+.note {
+  flex: none;
+  width: calc(210px * var(--k) + var(--tile-gap) + 1px);
+}
+
 .note-text {
   display: block;
-  width: calc(210px * var(--k));
+  width: 100%;
   height: var(--tile-body);
   margin: 0;
   padding: 0;
@@ -455,32 +461,31 @@ body.no-widgets .tiles { display: none; }
   to { opacity: .55; }
 }
 
-/* Search field: at the right end, its top level with the large figures. */
+/* Search field: at the left end of the bar, opposite the buttons. It is part of the bar, so it
+   is not scaled and does not depend on the tiles. 280px wide, shrinking on a narrow page
+   down to 140px so it never reaches the buttons. */
 
 .find {
   position: relative;
   display: flex;
-  flex: none;
+  flex: 0 1 280px;
   align-items: center;
-  width: calc(280px * var(--k));
-  margin-top: calc(24px * var(--k));
-  margin-left: auto;
+  min-width: 140px;
+  margin-left: 0;
 }
-
-body.no-widgets .find { margin-top: 0; }
 
 .find input {
   width: 100%;
-  height: calc(36px * var(--k));
-  padding: 0 calc(40px * var(--k)) 0 calc(13px * var(--k));
+  height: 36px;
+  padding: 0 40px 0 13px;
   border: 1px solid var(--line);
-  border-radius: calc(9px * var(--k));
+  border-radius: 9px;
   outline: none;
   background: color-mix(in srgb, var(--bg) 70%, transparent);
   box-shadow: none;
   color: var(--fg);
   font: inherit;
-  font-size: max(12px, calc(13px * var(--k)));
+  font-size: 13px;
   transition: border-color .15s ease, background .15s ease;
 }
 
@@ -496,25 +501,23 @@ body.no-widgets .find { margin-top: 0; }
 body.no-links .top { width: 100%; }
 body.no-links .top-in { width: fit-content; max-width: calc(100% + var(--tile-gap) + 1px); margin-right: auto; margin-left: auto; }
 
-/* The tiles wrapped (widgets.js sets data-place): the search field follows the last tile,
-   or, alone in its row, stands at the left like the tiles above it. */
-.find[data-place="follow"] { margin-left: 0; }
-.find[data-place="own"] { margin-left: calc(var(--tile-gap) + 1px); }
-
-/* Narrow page: smaller gaps, and the search field takes the whole width below the tiles,
-   right above the cards. The container is the page (newtab.css). */
+/* Narrow page: smaller gaps between the tiles. The container is the page (newtab.css). */
 @container (max-width: 760px) {
   .top-in { --tile-gap: calc(18px * var(--k)); }
-  .find { flex: 1 1 100%; width: auto; margin-top: 0; margin-left: calc(var(--tile-gap) + 1px); }
 }
 
-/* The widget bar: in the room above the header, at the right edge of the page
-   (the page padding, newtab.css). Not scaled with the cards. */
+/* The bar: in the room above the header. The search field stands at its left, level with
+   the left edge of the cards (the header is as wide as the board, at least 460px, never
+   wider than the page content), the buttons at the right edge of the page (the page padding,
+   newtab.css). Not scaled with the cards: --k is 1 inside it, so it looks the same whatever
+   the widgets and the board do. */
 
 .bar {
+  --k: 1;
   position: absolute;
   z-index: 3;
   top: calc(clamp(20px, 11vh, 110px) - clamp(8px, 3.2vh, 30px));
+  left: calc(50% - min(100% - 2 * clamp(16px, 3vw, 48px), max(var(--board-w), 460px)) / 2);
   right: clamp(16px, 3vw, 48px);
   display: flex;
   transform: translateY(-100%);
@@ -523,6 +526,8 @@ body.no-links .top-in { width: fit-content; max-width: calc(100% + var(--tile-ga
 }
 
 .bar-widgets {
+  margin-left: auto;
+  flex: none;
   display: flex;
   align-items: center;
   gap: 2px;
@@ -643,13 +648,15 @@ body.no-links .top-in { width: fit-content; max-width: calc(100% + var(--tile-ga
 
 .gear[data-tip]::after { left: auto; right: 0; transform: none; }
 
-/* First-run hint, left of the bar. */
+/* First-run hint, between the search field and the buttons. */
 .onboard {
   display: flex;
+  flex: 0 1 auto;
   align-items: center;
   gap: 6px;
-  max-width: min(520px, calc(100vw - 320px));
-  margin-right: 4px;
+  min-width: 220px;
+  max-width: 520px;
+  margin-left: 2px;
   padding: 4px 4px 4px 12px;
   border: 1px solid var(--line);
   border-radius: 8px;
@@ -670,7 +677,8 @@ body.no-links .top-in { width: fit-content; max-width: calc(100% + var(--tile-ga
 .onboard button:hover { background: color-mix(in srgb, var(--fg) 8%, transparent); color: var(--fg); }
 .onboard svg { width: 13px; height: 13px; }
 
-@media (max-width: 620px) {
+/* Below this width the search field, the hint and the buttons would not fit side by side. */
+@media (max-width: 900px) {
   .onboard { display: none; }
 }
 

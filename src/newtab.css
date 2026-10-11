@@ -114,7 +114,6 @@ body::after {
   /* As wide as the cards, at least 460px (room for the week of weather even with
      few cards), never wider than the window. */
   width: min(100%, max(var(--board-w), 460px));
-  /* The search field lines up with the right edge of the cards. */
   padding: 0 0 calc(clamp(12px, 2.4vh, 20px) * var(--k)) calc(4px * var(--k));
   text-shadow: 0 1px 14px var(--shade);
 }
@@ -122,12 +121,10 @@ body::after {
 /* Weather styles live in weather.css. */
 
 .find {
+  /* widgets.css places the field and sets its width. */
   position: relative;
   display: flex;
-  /* Stays at the right edge when the weather is turned off. */
-  margin-left: auto;
   align-items: center;
-  width: min(calc(320px * var(--k)), 42%);
   text-shadow: none;
 }
 
