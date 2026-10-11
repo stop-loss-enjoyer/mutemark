@@ -256,12 +256,12 @@ async function fillFolders() {
   } catch {
     return;
   }
-  const options = [new Option("Bookmarks bar (default)", "")];
-  // The classic bookmarks bar is the default entry above, so it is not listed twice:
+  const options = [new Option("All bookmarks", "all"), new Option("Bookmarks bar", "")];
+  // The classic bookmarks bar is the entry above, so it is not listed twice:
   // its subfolders are listed right under it, by their own names. Separators are skipped.
   const walk = (node, path) => {
     for (const child of node.children ?? []) {
-      if (child.url || child.type === "separator" || options.length > 1000) continue;
+      if (child.url || child.type === "separator" || options.length > 1001) continue;
       if (!path.length && TOOLBAR_IDS.includes(child.id)) {
         walk(child, path);
         continue;
@@ -274,9 +274,9 @@ async function fillFolders() {
   };
   walk(root, []);
   startFolderEl.replaceChildren(...options);
-  // A folder deleted since it was chosen: the bookmarks bar is on the page again.
+  // A folder deleted since it was chosen: all bookmarks are on the page again.
   startFolderEl.value = settings.startFolder;
-  if (startFolderEl.value !== settings.startFolder) startFolderEl.value = "";
+  if (startFolderEl.value !== settings.startFolder) startFolderEl.value = "all";
 }
 
 /* Background image */
@@ -477,14 +477,29 @@ document.getElementById("clear-yes").addEventListener("click", async () => {
 
 /* First-run hint */
 
+// The text names what the page shows right now. It is written again after every redraw
+// (newtab.js), so a change of the start folder or an empty bar never leaves a stale line.
+function onboardText() {
+  const { kind, name } = shownView;
+  if (kind === "all") return "Mutemark shows all your bookmarks. Widgets and settings are here.";
+  if (kind === "bar") return "Mutemark shows your bookmarks bar. Widgets and settings are here.";
+  if (kind === "folder" && name) {
+    const short = name.length > 40 ? `${name.slice(0, 40)}...` : name;
+    return `Mutemark shows your bookmarks from "${short}". Widgets and settings are here.`;
+  }
+  return "Mutemark shows your bookmarks. Widgets and settings are here.";
+}
+
 function showOnboarding() {
   if (settings.onboarded) return;
-  onboardTextEl.textContent = shownBar
-    ? "Mutemark shows your bookmarks bar. Widgets and settings are here."
-    : "Mutemark shows your bookmarks. Widgets and settings are here.";
+  onboardTextEl.textContent = onboardText();
   onboardEl.hidden = false;
   document.body.classList.add("onboarding");
 }
+
+document.addEventListener("mutemark:view", () => {
+  if (!onboardEl.hidden) onboardTextEl.textContent = onboardText();
+});
 
 function dismissOnboarding() {
   onboardEl.hidden = true;

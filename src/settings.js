@@ -19,8 +19,10 @@ const SETTINGS_SCHEMA = {
   background: ["", (v) => ["", "gradient", "solid", "image"].includes(v) || Boolean(findBackground(v))],
   // Whether the user's own image is mostly light or dark, measured when it is added.
   imageTone: ["dark", "dark", "light"],
-  // "" is the bookmarks bar, otherwise a bookmark folder id.
-  startFolder: ["", (v) => typeof v === "string" && v.length < 100],
+  // "all" shows every bookmark and is the default. "" is the bookmarks bar only: it is kept as
+  // it is for those who already have settings stored, so their page does not change.
+  // Anything else is a bookmark folder id (a folder that is gone is handled in newtab.js).
+  startFolder: ["all", (v) => v === "all" || v === "" || (typeof v === "string" && v.length < 100)],
   // The weather widget. On by default, but nothing is requested before a place is chosen.
   weather: [true, true, false],
   // The other widgets in the header that are turned on, see widgets.js.

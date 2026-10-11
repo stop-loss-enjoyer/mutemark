@@ -408,6 +408,8 @@ body.dragging-now .link .host { opacity: 0; }
 /* Search: matches stay bright, the rest fades, the layout does not move. */
 
 body.finding .link:not(.match) { opacity: .25; }
+/* A card with matches past its cap shows only its matches, so they fit in the room of the card. */
+body.finding .card.has-extra .link:not(.match) { display: none; }
 body.finding .card:not(.has-match) h2 { opacity: .4; }
 
 /* While searching, the hovered row is paler than usual so it does not compete with the current one. */

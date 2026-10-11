@@ -45,11 +45,40 @@ function toolbarFolders(root) {
   return bars.length ? bars : top.slice(0, 1);
 }
 
+// The top level folders of the bookmark tree in the order the "all bookmarks" view shows them:
+// the bookmarks bar, Firefox's Bookmarks Menu, Other bookmarks, Mobile bookmarks.
+// Newer Chromium names them with folderType, which also covers the second set of folders
+// that a signed-in account adds. The ids are the fallback for Firefox and older Chromium.
+const ROOT_TYPES = { "bookmarks-bar": 0, other: 2, mobile: 3 };
+const ROOT_IDS = { "1": 0, toolbar_____: 0, menu________: 1, "2": 2, unfiled_____: 2, "3": 3, mobile______: 3 };
+const OTHER_ROOT = 4;
+
+// Where a top level folder goes in that order, or -1 for one that is not shown.
+// Managed bookmarks (set by an administrator) are read only, so nothing could be dragged into them.
+function rootRank(node) {
+  // Chrome before 134 has no folderType, so the managed root is also recognised by its flag.
+  if (node.folderType === "managed" || node.unmodifiable === "managed") return -1;
+  return ROOT_TYPES[node.folderType] ?? ROOT_IDS[node.id] ?? OTHER_ROOT;
+}
+
+// Every shown top level folder, in order. Among folders of the same kind the classic one
+// (by its well known id) comes first, then the tree's own order. The sort is stable.
+function rootFolders(root) {
+  return (root.children ?? [])
+    .filter((node) => !node.url && rootRank(node) >= 0)
+    .sort((a, b) => rootRank(a) - rootRank(b) || (isClassicRoot(b) - isClassicRoot(a)));
+}
+
+function isClassicRoot(node) {
+  return Object.hasOwn(ROOT_IDS, node.id) ? 1 : 0;
+}
+
 // Address schemes a bookmark may use. Web addresses open as normal links.
-const LINK_SCHEMES = ["http:", "https:", "ftp:"];
+const LINK_SCHEMES = ["http:", "https:"];
 // Local files and browser pages such as chrome://settings. A page cannot open them
-// itself, the browser does it through the tabs API. Firefox refuses some of them.
-const BROWSER_SCHEMES = ["file:", "about:", "chrome:", "edge:", "brave:", "vivaldi:", "opera:"];
+// itself, the browser does it through the tabs API. Firefox refuses some of them,
+// and no supported browser opens ftp: any more, so it ends in the same message.
+const BROWSER_SCHEMES = ["file:", "about:", "chrome:", "edge:", "brave:", "vivaldi:", "opera:", "ftp:"];
 // Everything else is not shown: javascript: bookmarklets, Firefox place: queries,
 // data: and blob: addresses.
 

@@ -14,7 +14,7 @@ Your browser bookmarks as a calm new tab. No account, no analytics, no servers o
 
 ## Full description (Chrome Web Store, Edge)
 
-Mutemark turns your bookmarks into your new tab page: a card for each folder of your bookmarks bar (or any start folder you pick), sized to fill your window and remembering where each card sits.
+Mutemark turns your bookmarks into your new tab page: a card for each folder of all your bookmarks (or only the bookmarks bar, or any start folder you pick in Settings), sized to fill your window and remembering where each card sits.
 
 Start typing to find a bookmark by name, address, folder or initials. It also understands text typed on the wrong keyboard layout. Drag to reorder bookmarks or move them between folders, rename or delete them with undo. Right-click a bookmark to open it in a new tab, copy its link, rename or delete it. Make a new group with + New group, rename it, drag it by its title into place, or delete it and keep its bookmarks, with Undo. An empty group shows a card that says where to drop bookmarks. Every change goes straight to your browser's own bookmarks, so nothing is locked inside the extension.
 

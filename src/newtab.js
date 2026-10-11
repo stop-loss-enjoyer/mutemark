@@ -1,5 +1,7 @@
-// Mutemark new tab page: the bookmarks bar laid out as cards.
-// The loose bookmarks of the start folder make the first card, each folder in it is a group with a card of its own.
+// Mutemark new tab page: the bookmarks laid out as cards. By default these are all bookmarks,
+// one root after another (the bookmarks bar, Other bookmarks and so on); the start folder in Settings
+// narrows the page to the bookmarks bar or to one folder.
+// The loose bookmarks of a root or of the start folder make a card, each folder in it is a group with a card of its own.
 // Links inside a group are collected recursively.
 // Cards are packed into a grid that fills the window, without scrolling if at all possible.
 // Bookmarks and whole groups can be dragged, the right button opens a menu.
@@ -8,6 +10,7 @@
 // settings in settings.js (storage and look) and panel.js (the Settings panel).
 
 // A card shows at most this many bookmarks. Its counter tells how many the folder has.
+// Search still looks through all of them, see applyFind().
 const MAX_LINKS_PER_SECTION = 60;
 const LOOSE_SECTION_TITLE = "Bookmarks";
 const NEW_GROUP_TITLE = "New group";
@@ -177,10 +180,12 @@ let renameNext = null;
 let homeId = null;
 // The start folder chosen in Settings was shown, not the bookmarks bar (for the empty message).
 let chosenFolder = false;
-// The bookmarks bar itself is on the page (for the first-run hint).
-let shownBar = true;
+// What the page shows, for the first-run hint: "all", "bar" (the bookmarks bar with its bookmarks),
+// "folder" (name tells which) or "other" (the bar was empty and the rest of the tree took its place).
+let shownView = { kind: settings.startFolder === "all" ? "all" : settings.startFolder ? "folder" : "bar", name: "" };
 
-// Layouts and the snapshot are kept per start folder.
+// Layouts and the snapshot are kept per start folder. "all" is a key of its own,
+// so the layouts of all bookmarks never mix with the bookmarks bar ("") or a folder.
 function folderKey() {
   return settings.startFolder || "";
 }
@@ -234,10 +239,26 @@ function collectLinks(node, acc = []) {
   return acc;
 }
 
-// total: how many bookmarks the folder has, links: the ones shown on the card.
-// loose: the card of the start folder itself, it cannot be renamed, deleted or moved.
+// The folder holds a bookmark of any kind, shown or not. Firefox reports a separator with
+// the address "data:", so it is skipped by type: a folder with only separators is empty.
+function hasBookmarks(node) {
+  return (node.children ?? []).some(
+    (child) => child.type !== "separator" && (child.url || hasBookmarks(child)),
+  );
+}
+
+// total: how many bookmarks the folder has, links: the ones shown on the card,
+// rest: the others, which only search looks at.
+// loose: the card of the start folder or root itself, it cannot be renamed, deleted or moved.
 function makeSection(title, folderId, all, loose = false) {
-  return { title, folderId, loose, total: all.length, links: all.slice(0, MAX_LINKS_PER_SECTION) };
+  return {
+    title,
+    folderId,
+    loose,
+    total: all.length,
+    links: all.slice(0, MAX_LINKS_PER_SECTION),
+    rest: all.slice(MAX_LINKS_PER_SECTION),
+  };
 }
 
 // Every folder is a group and gets a card, an empty one too: it is where bookmarks are dragged.
@@ -249,8 +270,14 @@ function buildSections(folder) {
   if (loose.length) {
     result.push(makeSection(decodeEntities(folder.title || "") || LOOSE_SECTION_TITLE, folder.id, loose, true));
   }
-  for (const sub of children.filter((c) => !c.url)) {
-    result.push(makeSection(decodeEntities(sub.title || ""), sub.id, collectLinks(sub)));
+  // Firefox separators are not folders. Real Firefox gives them a "data:" address, which the
+  // address test already excludes, but the type check keeps a separator without one out too.
+  for (const sub of children.filter((c) => !c.url && c.type !== "separator")) {
+    const links = collectLinks(sub);
+    // A folder that holds only bookmarks the page does not show (Firefox place: queries,
+    // bookmarklets) would claim to be empty and invite drops, so it gets no card.
+    if (!links.length && hasBookmarks(sub)) continue;
+    result.push(makeSection(decodeEntities(sub.title || ""), sub.id, links));
   }
   return result;
 }
@@ -788,9 +815,11 @@ function renderCard(section, place) {
   const shown = section.links.length;
   const total = Math.max(section.total ?? shown, shown);
   count.textContent = total > shown ? `${shown} of ${total}` : String(shown);
+  // Search puts the number of matches here and takes the count back from this copy.
+  count.dataset.text = count.textContent;
   if (total > shown) {
     count.title = `This card shows the first ${shown} of ${total} bookmarks. ` +
-      "The rest are not shown and search does not find them. Move some of them into another folder next to this one to see them.";
+      "Search looks through all of them. Move some of them into another folder next to this one to see them.";
   }
   head.append(title, count);
 
@@ -920,8 +949,10 @@ function layout(resizing = false) {
     findItems = null;
     boardEl.replaceChildren(...next.childNodes);
     watchIcons(boardEl);
-    applyFind();
   }
+  // Also when the page is unchanged: the bookmarks past a card's cap may have changed, and
+  // the rows search added to a card are drawn again from the current data.
+  applyFind();
   saveSnapshot(vars, cards);
   clearTimeout(planTimer);
   const save = savePlan.bind(null, availW, window.innerHeight, { k, air }, cols, plan.cards, base);
@@ -977,19 +1008,24 @@ async function load() {
   }
   try {
     const bars = toolbarFolders(root);
-    // The folder chosen in Settings. If it was deleted, the bookmarks bar again:
-    // the setting is reset, so layouts are kept under the bookmarks bar, not the lost folder.
+    const everything = settings.startFolder === "all";
+    // The folder chosen in Settings. If it was deleted, all bookmarks again (the default):
+    // the setting is reset, so layouts are kept under that view, not the lost folder.
     // Saving it reloads the page through the settings event.
-    const start = settings.startFolder ? findFolder(root, settings.startFolder) : null;
-    if (settings.startFolder && !start) {
-      saveSettings({ startFolder: "" });
+    const start = !everything && settings.startFolder ? findFolder(root, settings.startFolder) : null;
+    if (!everything && settings.startFolder && !start) {
+      saveSettings({ startFolder: "all" });
       return;
     }
     chosenFolder = Boolean(start);
+    // New groups, and bookmarks whose own folder is gone, go to the bookmarks bar in the all view too.
     homeId = start?.id ?? bars[0]?.id ?? null;
 
     let found;
-    if (start) {
+    if (everything) {
+      // A root with no bookmarks and no folders gives no card. The bar fallback below is for the bar view only.
+      found = rootFolders(root).flatMap(buildSections);
+    } else if (start) {
       found = buildSections(start);
     } else {
       found = bars.flatMap(buildSections);
@@ -1002,7 +1038,11 @@ async function load() {
       }
     }
     sections = found;
-    shownBar = !start && bars.some((bar) => hasLinks(buildSections(bar)));
+    if (everything) shownView = { kind: "all", name: "" };
+    else if (start) shownView = { kind: "folder", name: decodeEntities(start.title || "") || "Untitled folder" };
+    else shownView = { kind: bars.some((bar) => hasLinks(buildSections(bar))) ? "bar" : "other", name: "" };
+    // The first-run hint follows what is on the page now (panel.js).
+    document.dispatchEvent(new CustomEvent("mutemark:view"));
     forgetNoFav();
     // The header is measured for the layout: with the font it will be drawn in.
     await fontReady;
@@ -1143,6 +1183,11 @@ function watchIcons(root) {
 // A page cannot open browser pages such as chrome://settings itself, the browser does it.
 // Firefox refuses some of them (about:config and the like): then a message says so.
 async function openUrl(url, newTab) {
+  // No supported browser opens ftp: any more, so the extension does not try.
+  if (schemeOf(url) === "ftp:") {
+    showToast("The browser does not let extensions open this address", false);
+    return;
+  }
   if (!isWebUrl(url) && api?.tabs) {
     try {
       if (newTab) await api.tabs.create({ url });
@@ -1322,6 +1367,64 @@ function getFindItems() {
   return findItems;
 }
 
+// Search fields of a bookmark that is past the cap of its card, which has no row on the page.
+// Kept per bookmark object: they are made on the first search and live until the next load.
+const restFields = new WeakMap();
+
+function restItem(bookmark, section) {
+  let item = restFields.get(bookmark);
+  if (!item) {
+    const name = decodeEntities(bookmark.title || "").trim() || hostOf(bookmark.url);
+    item = {
+      name,
+      norm: normalize(name),
+      starts: wordStarts(name),
+      host: normalize(hostOf(bookmark.url)),
+      folder: normalize(section.title),
+    };
+    restFields.set(bookmark, item);
+  }
+  return item;
+}
+
+// A card shows its first MAX_LINKS_PER_SECTION bookmarks, but a search must find the others
+// too. While a query is active, such a card shows only its matches, the ones past the cap
+// as extra rows after the ordinary ones. The card keeps its size: at most as many matches as
+// it shows bookmarks normally, the rest are counted in the header ("84 matched") and in the
+// total, but not drawn. Returns how many matches lie past the caps, drawn or not.
+function findPastCap(queries, current) {
+  let found = 0;
+  for (const section of sections) {
+    if (!section.rest.length) continue;
+    const card = cardOf(section.folderId);
+    if (!card) continue;
+    const hits = [];
+    for (const bookmark of section.rest) {
+      const result = matchItem(restItem(bookmark, section), queries);
+      if (result.score > 0) hits.push({ bookmark, result });
+    }
+    if (!hits.length) continue;
+    found += hits.length;
+    const list = card.querySelector(".links");
+    const room = Math.max(0, section.links.length - list.querySelectorAll(".link.match").length);
+    for (const { bookmark, result } of hits.slice(0, room)) {
+      const link = renderLink(bookmark);
+      link.classList.add("extra", "match");
+      list.append(link);
+      watchIcons(link);
+      const item = { link, nameEl: link.querySelector(".name"), name: link.querySelector(".name").textContent };
+      paintName(item, result.marks);
+      if (!current.best || result.score > current.best.score) current.best = { link, score: result.score };
+    }
+    card.classList.toggle("has-extra", room > 0);
+    if (hits.length > room) {
+      const matched = list.querySelectorAll(".link.match").length - room + hits.length;
+      card.querySelector(".count").textContent = `${matched} matched`;
+    }
+  }
+  return found;
+}
+
 // The name with the matching letters highlighted.
 function paintName(item, marks) {
   const el = item.nameEl;
@@ -1362,11 +1465,25 @@ function visibleMatches() {
 
 // Matches stay bright, the rest fades, the layout does not move.
 // The best match becomes current, not the first one in order.
+// The query of the last applyFind, to tell a relayout from a new search.
+let lastFindQuery = "";
+
 function applyFind() {
   const raw = findEl.value.trim();
   const finding = raw.length > 0;
   const queries = finding ? queryVariants(raw) : null;
   document.body.classList.toggle("finding", finding);
+  // A relayout runs this again with the same query. The keyboard selection then stays where
+  // the user moved it, as long as that row still matches.
+  const keepId = finding && raw === lastFindQuery ? boardEl.querySelector(".link.current")?.dataset.id : null;
+  lastFindQuery = raw;
+  // Rows and counts that the last query put on the cards go first.
+  for (const link of boardEl.querySelectorAll(".link.extra")) link.remove();
+  for (const card of boardEl.querySelectorAll(".card")) {
+    card.classList.remove("has-extra");
+    const count = card.querySelector(".count");
+    if (count?.dataset.text !== undefined) count.textContent = count.dataset.text;
+  }
   if (!finding && !findItems) {
     foundEl.textContent = "";
     return;
@@ -1382,10 +1499,16 @@ function applyFind() {
     paintName(item, hit ? result.marks : []);
     if (hit) {
       shown++;
-      if (!best || result.score > best.score) best = { item, score: result.score };
+      if (!best || result.score > best.score) best = { link: item.link, score: result.score };
     }
   }
-  best?.item.link.classList.add("current");
+  if (finding) {
+    const current = { best };
+    shown += findPastCap(queries, current);
+    best = current.best;
+  }
+  const kept = keepId ? [...boardEl.querySelectorAll(".link.match")].find((el) => el.dataset.id === keepId) : null;
+  (kept ?? best?.link)?.classList.add("current");
   for (const card of boardEl.querySelectorAll(".card")) {
     card.classList.toggle("has-match", Boolean(card.querySelector(".match")));
   }
