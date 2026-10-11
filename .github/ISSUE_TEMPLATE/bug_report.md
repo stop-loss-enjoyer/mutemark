@@ -13,7 +13,7 @@ labels: bug
 2.
 
 **Versions**
-- Mutemark: (the version in the extensions page, for example 1.0.1)
+- Mutemark: (the version in the extensions page, for example 1.1.0)
 - Build: (Chromium or Firefox package)
 - Browser and its version:
 - Operating system:

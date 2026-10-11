@@ -20,7 +20,7 @@ Start typing to find a bookmark by name, address, folder or initials. It also un
 
 Small widgets above the bookmarks, each one a click to turn on or off: weather, clock, calendar, world clocks, a note and a timer. All but the weather work without the network.
 
-Light and dark themes, an accent color, and a background: one of 13 public domain and CC0 photos that ship with the extension, a gradient, a solid color or your own image, which stays in your browser.
+Light and dark themes, an accent color, and a background: one of 28 public domain and CC0 pictures that ship with the extension (photos from NASA, NPS, USFWS, NOAA and USGS, and paintings and a print from the National Gallery of Art, The Met and the Museum of Fine Arts, Boston), a gradient, a solid color or your own image, which stays in your browser.
 
 Privacy is the point:
 - No account, no analytics, no telemetry, no servers of ours.
@@ -91,5 +91,5 @@ Declared in `manifests/firefox.json`: `data_collection_permissions.required` is 
 - Source is unminified; the submitted package is produced by `./build.sh`, which only copies files, merges manifest overlays and zips.
 - No network request is made until the user searches for or chooses a place in the weather widget (on by default, empty until a place is chosen). Turning the widget off stops all requests.
 - The clock, calendar, world clocks, note and timer use no network. The timer rings once, only while the tab stays open, with a bell strike synthesized with WebAudio in the page.
-- The 13 background photos ship in the package. Credits and license proofs are in THIRD_PARTY_NOTICES.md.
+- The 28 background pictures ship in the package. Credits and license proofs are in THIRD_PARTY_NOTICES.md.
 - Firefox build has no site icons by design.

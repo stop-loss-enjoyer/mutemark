@@ -31,7 +31,7 @@ A new tab page for Chromium browsers and Firefox that shows your bookmarks as a 
   - **Note:** a plain text note, saved as you type and kept in step between open tabs.
   - **Timer:** 5, 15 or 25 minutes, or your own time (`10` or `1:30`), with pause and reset. At the end it rings once, with a single bell strike played in the page by one tab only, without a sound file, a notification or a permission. It works only while a new tab stays open: close the tab and it will not ring. A tab that stays in the background for a long time may ring up to a minute late, because the browser slows its timers.
 - Weather: current conditions and a 7-day forecast from Open-Meteo, for a place you choose yourself in the header. A search shows its matches to choose from, even when there is only one. Nothing is requested until you search for or choose a place. Clearing the place field and pressing Enter forgets the place.
-- Light and dark themes, an accent color, and a background: one of 13 photos that ship with the extension (public domain or CC0), the theme gradient, a solid color or your own image. A veil in the theme color keeps text readable on any of them, and gets stronger when a light picture meets the dark theme or the other way round.
+- Light and dark themes, an accent color, and a background: one of 28 pictures that ship with the extension (photos from NASA, NPS, USFWS, NOAA and USGS, and public domain paintings and a print from the National Gallery of Art, The Met and the Museum of Fine Arts, Boston; all public domain or CC0), the theme gradient, a solid color or your own image. A veil in the theme color keeps text readable on any of them, and gets stronger when a light picture meets the dark theme or the other way round.
 
 ## Settings
 
@@ -39,7 +39,7 @@ Click the gear at the right end of the widget bar, above the header, to open Set
 
 - **Theme:** System (follows the operating system), Light or Dark.
 - **Accent:** the theme's own, one of six palette colors, or any color you pick.
-- **Background:** a gallery of the bundled photos (credits in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), the chosen one is credited under the gallery with a link to its source), Gradient, Solid, or Your image. Until you choose, it is the photo Curves under the dark theme and Aiguille Rousse in a Sea of Clouds under the light one, or the theme wallpaper in a build made with the [Omarchy script](contrib/omarchy). Your image is chosen from your disk and stored in the extension's IndexedDB in this browser, without its file name. It is never uploaded. Remove deletes it.
+- **Background:** a gallery of the bundled pictures (credits in [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), the chosen one is credited under the gallery with a link to its source), Gradient, Solid, or Your image. Until you choose, it is the photo Curves under the dark theme and Aiguille Rousse in a Sea of Clouds under the light one, or the theme wallpaper in a build made with the [Omarchy script](contrib/omarchy). Your image is chosen from your disk and stored in the extension's IndexedDB in this browser, without its file name. It is never uploaded. Remove deletes it.
 - **Start folder** (under More): what the page shows. All bookmarks by default, or the bookmarks bar only, or any folder of your bookmarks. Layouts are remembered for each choice separately.
 - **Units and clock:** temperature in °C or °F, wind in m/s, km/h or mph, and a 12-hour or 24-hour clock (12h, 24h) for the clocks and the time of the last weather update. Changing units sends nothing: the forecast is converted in the page. Until you choose the clock, it follows the browser's locale. On a 24-hour clock the hour always has two digits, as in 09:05.
 - **More:** import an Omarchy theme (a `colors.toml` or `alacritty.toml` with hex colors, from a terminal or desktop theme). Only the colors and the file's name are kept, not the file. While imported colors are in use, the Theme choice above is set by them. Reset returns to the built-in palette. Also links to [PRIVACY.md](PRIVACY.md), the source code and the Open-Meteo attribution.
@@ -80,7 +80,7 @@ Download the zip for your browser from the [latest release](https://github.com/s
 
 **Chrome, Brave, Edge** (Vivaldi should work but is untested)
 
-1. Unzip the Chromium package into a new, empty folder with a fixed name that you keep. The zip has no top-level folder, so name the target: `unzip mutemark-chromium-1.0.1.zip -d mutemark`.
+1. Unzip the Chromium package into a new, empty folder with a fixed name that you keep. The zip has no top-level folder, so name the target: `unzip mutemark-chromium-1.1.0.zip -d mutemark`.
 2. Open the browser's extensions page and turn on Developer mode.
 3. Choose Load unpacked and select that folder, the one with `manifest.json` directly inside.
 

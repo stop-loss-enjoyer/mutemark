@@ -306,7 +306,7 @@
 .accent-color:not(.chosen)::-moz-color-swatch { opacity: 0; }
 
 /* Background gallery: pictures, then the theme gradient, the solid color and your own. */
-/* Small tiles, six to a row: the whole gallery takes three rows. */
+/* Small tiles, six to a row: the whole gallery takes six rows. */
 .bg-grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));

@@ -34,7 +34,7 @@ OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 The background pictures in `src/backgrounds/` (a full size `<name>.jpg` and a small `<name>-thumb.jpg` each) are in the public domain or dedicated to it under CC0 1.0. No attribution is legally required for any of them. They are credited here anyway, and Settings shows the title, author and license of the chosen picture with a link to its source.
 
-Works by U.S. federal employees made as part of their official duties are not subject to copyright in the United States (17 U.S.C. 105). NASA images are used under the NASA media usage guidelines (https://www.nasa.gov/nasa-brand-center/images-and-media/). Using them does not imply endorsement by NASA, NPS, USFWS, USGS or the U.S. Coast Guard.
+Works by U.S. federal employees made as part of their official duties are not subject to copyright in the United States (17 U.S.C. 105). NASA images are used under the NASA media usage guidelines (https://www.nasa.gov/nasa-brand-center/images-and-media/). Using them does not imply endorsement by NASA, NPS, USFWS, USGS, NOAA or the U.S. Coast Guard.
 
 All files were resized to 2560 px on the long side, re-encoded as JPEG and stripped of metadata. Any other edits are listed per image.
 
@@ -157,6 +157,147 @@ All files were resized to 2560 px on the long side, re-encoded as JPEG and strip
 - Source: https://images.nasa.gov/details/iss061e003881
 - License: Public domain (NASA image)
 - License proof: https://images-api.nasa.gov/search?nasa_id=iss061e003881 , https://www.nasa.gov/nasa-brand-center/images-and-media/
+
+### beach-palmyra-lagoon
+
+- Title: Palmyra Atoll Lagoon Shore
+- Author and date: Ryan Hagerty, U.S. Fish and Wildlife Service (credit "USFWS"; file Artist field "Hagerty; Ryan"), 15 April 2023 (Palmyra Atoll National Wildlife Refuge, Line Islands)
+- Institution: U.S. Fish and Wildlife Service, Pacific Region
+- Source: https://www.flickr.com/photos/usfwspacific/53251232003 (file via https://commons.wikimedia.org/wiki/File:Ansicht_des_Palmyra_Atoll_National_Wildlife_Refuge,_Vereinigte_Staaten.jpg)
+- License: Public domain (U.S. federal government work, PD-USGov-FWS)
+- License proof: https://commons.wikimedia.org/wiki/File:Ansicht_des_Palmyra_Atoll_National_Wildlife_Refuge,_Vereinigte_Staaten.jpg , https://www.fws.gov/media/photos-wildlife-photographers-field (lists Hagerty among the Service's own wildlife photographers; no page states a formal job title)
+
+### volcano-lava-lake-glow
+
+- Title: Fissures Glowing in Halemaumau Lava Lake
+- Author and date: M. Patrick, U.S. Geological Survey ("USGS photo taken by M. Patrick"), 29 September 2021 (Halemaumau crater, Kilauea, Hawaii)
+- Institution: U.S. Geological Survey, Hawaiian Volcano Observatory
+- Source: https://www.usgs.gov/media/96756 (file via https://commons.wikimedia.org/wiki/File:K%C4%ABlauea_summit_eruption_fissures_within_Halema%27uma%27u_crater_lava_lake_(96756).jpg)
+- License: Public domain (U.S. federal government work, PD-USGov-USGS)
+- License proof: https://www.usgs.gov/media/96756 , https://commons.wikimedia.org/wiki/File:K%C4%ABlauea_summit_eruption_fissures_within_Halema%27uma%27u_crater_lava_lake_(96756).jpg
+
+### wb-storm-fuji
+
+- Title: Storm below Mount Fuji (Sanka no haku u)
+- Author and date: Katsushika Hokusai, woodblock print from Thirty-six Views of Mount Fuji, ca. 1830-32 (Japan)
+- Institution: The Metropolitan Museum of Art (Henry L. Phillips Collection, accession JP2961)
+- Source: https://www.metmuseum.org/art/collection/search/56229
+- License: CC0 1.0 Universal Public Domain Dedication (The Met Open Access)
+- License proof: https://www.metmuseum.org/art/collection/search/56229
+- Edits: cropped to remove the paper margin, the title cartouche and the signature
+
+### winter-hayden-lone-tree
+
+- Title: Lone tree and snowy hills in Hayden Valley (shown in Settings as "Lone Tree and Snowy Hills")
+- Author and date: Jacob W. Frank, National Park Service, 13 January 2017 (Hayden Valley, Yellowstone National Park)
+- Institution: National Park Service, Yellowstone National Park
+- Source: https://commons.wikimedia.org/wiki/File:Lone_tree_and_snowy_hills_in_Hayden_Valley.jpg
+- License: Public domain (U.S. federal government work, PD-USGov-NPS)
+- License proof: https://commons.wikimedia.org/wiki/File:Lone_tree_and_snowy_hills_in_Hayden_Valley.jpg
+
+### canyon-mesa-arch-sunrise
+
+- Title: Mesa Arch Sunrise
+- Author and date: Rhodes Smartt, National Park Service (credit "NPS / Rhodes Smartt"), 25 May 2020 (Canyonlands National Park, Utah)
+- Institution: National Park Service, Canyonlands National Park
+- Source: https://www.flickr.com/photos/canyonlandsnps/51395812429 (file via https://commons.wikimedia.org/wiki/File:Mesa_Arch_Sunrise_(51395812429).jpg)
+- License: Public domain (U.S. federal government work, PD-USGov-NPS; Public Domain Mark 1.0 on the park's official Flickr)
+- License proof: https://www.flickr.com/photos/canyonlandsnps/51395812429 , https://commons.wikimedia.org/wiki/File:Mesa_Arch_Sunrise_(51395812429).jpg
+
+### waterfall-sacred-dancing-cascades
+
+- Title: Sacred Dancing Cascades
+- Author and date: Tim Rains, National Park Service (credit "NPS / Tim Rains"), 1 July 2012 (Glacier National Park, Montana)
+- Institution: National Park Service, Glacier National Park
+- Source: https://www.flickr.com/photos/glaciernps/20887835956 (file via https://commons.wikimedia.org/wiki/File:Sacred_Dancing_Cascades_(20887835956).jpg)
+- License: Public domain (U.S. federal government work, PD-USGov-NPS; posted on the park's official Flickr)
+- License proof: https://www.flickr.com/photos/glaciernps/20887835956 , https://commons.wikimedia.org/wiki/File:Sacred_Dancing_Cascades_(20887835956).jpg , https://www.nps.gov/glac/learn/news/media16-40.htm (Rains as the park's media contact)
+
+### kensett-beach-beverly
+
+- Title: Beach at Beverly
+- Author and date: John Frederick Kensett (died 1872), oil painting, c. 1869/1872 (Massachusetts coast)
+- Institution: National Gallery of Art, Washington (Gift of Frederick Sturges, Jr., accession 1978.6.5)
+- Source: https://www.nga.gov/artworks/56574
+- License: CC0 1.0 Universal Public Domain Dedication (NGA Open Access)
+- License proof: https://github.com/NationalGalleryOfArt/opendata (published_images.csv, row e36f10fe-8366-4753-a447-a9467fb4de32, openaccess=1; the painter died in 1872)
+- Edits: cropped to remove a figure at the left edge
+
+### storm-kansas
+
+- Title: Kansas (shown in Settings as "Supercell Thunderstorm in Kansas")
+- Author and date: Mike Coniglio, NOAA National Severe Storms Laboratory (credit "Photo by Mike Coniglio/NOAA NSSL"), 27 May 2019 (Kansas)
+- Institution: NOAA National Severe Storms Laboratory
+- Source: https://www.flickr.com/photos/noaanssl/48039373122/ (file via https://commons.wikimedia.org/wiki/File:Supercell-thunderstorm-in-Kansas.jpg)
+- License: Public domain (U.S. federal government work, PD-USGov-NOAA; Public Domain Mark 1.0 on the NOAA NSSL Flickr)
+- License proof: https://www.flickr.com/photos/noaanssl/48039373122/ , https://commons.wikimedia.org/wiki/File:Supercell-thunderstorm-in-Kansas.jpg
+
+### glacier-ice-cave
+
+- Title: Glacier Ice Cave, Glacier Bay National Park
+- Author and date: National Park Service ("NPS Photo"), 8 July 2008 (Glacier Bay National Park, Alaska)
+- Institution: National Park Service, Natural Resource Stewardship and Science
+- Source: https://www.flickr.com/photos/naturenps/31805619423/ (file via https://commons.wikimedia.org/wiki/File:Glacier_Features_Glacier_Ice_Cave,_Glacier_Bay_National_Park_II_(31805619423).jpg)
+- License: Public domain (U.S. federal government work, PD-USGov-NPS; Public Domain Mark 1.0 on the NPS Natural Resources Flickr)
+- License proof: https://www.flickr.com/photos/naturenps/31805619423/ , https://commons.wikimedia.org/wiki/File:Glacier_Features_Glacier_Ice_Cave,_Glacier_Bay_National_Park_II_(31805619423).jpg
+
+### cropsey-autumn-hudson
+
+- Title: Autumn, On the Hudson River
+- Author and date: Jasper Francis Cropsey (died 1900), oil painting, 1860 (Hudson River valley)
+- Institution: National Gallery of Art, Washington (Gift of the Avalon Foundation, accession 1963.9.1)
+- Source: https://www.nga.gov/artworks/46474
+- License: CC0 1.0 Universal Public Domain Dedication (NGA Open Access)
+- License proof: https://github.com/NationalGalleryOfArt/opendata (published_images.csv, row 0253c293-4cc1-4131-89a9-f2c997aebba0, openaccess=1; the painter died in 1900)
+- Edits: cropped to remove the inscription on the rock at the bottom edge
+
+### city-chicago
+
+- Title: Chicago, Illinois, pictured at night from the International Space Station (shown in Settings as "Chicago at Night from the ISS")
+- Author and date: Jessica Meir, NASA (image iss075e0099858, credit "NASA/Jessica Meir"), 8 September 2026
+- Institution: NASA (Johnson Space Center)
+- Source: https://images.nasa.gov/details/iss075e0099858 (file via https://commons.wikimedia.org/wiki/File:Chicago,_Illinois,_pictured_at_night_from_the_International_Space_Station_(iss075e0099858).jpg)
+- License: Public domain (NASA image, PD-USGov-NASA)
+- License proof: https://commons.wikimedia.org/wiki/File:Chicago,_Illinois,_pictured_at_night_from_the_International_Space_Station_(iss075e0099858).jpg , https://www.nasa.gov/nasa-brand-center/images-and-media/
+- Edits: cropped to remove the window frame and a reflection at the edges
+
+### canyon-green-river-overlook
+
+- Title: Green River Overlook
+- Author and date: Rhodes Smartt, National Park Service (credit "NPS / Rhodes Smartt"), 30 May 2020 (Island in the Sky, Canyonlands National Park, Utah)
+- Institution: National Park Service, Canyonlands National Park
+- Source: https://www.flickr.com/photos/canyonlandsnps/51396157040 (file via https://commons.wikimedia.org/wiki/File:Green_River_Overlook_(51396157040).jpg)
+- License: Public domain (U.S. federal government work, PD-USGov-NPS; Public Domain Mark 1.0 on the park's official Flickr)
+- License proof: https://www.flickr.com/photos/canyonlandsnps/51396157040 , https://commons.wikimedia.org/wiki/File:Green_River_Overlook_(51396157040).jpg
+- Edits: cropped to the center of a wide panorama
+
+### pt-bier-valley
+
+- Title: Valley of the Yosemite
+- Author and date: Albert Bierstadt (died 1902), oil on paperboard, 1864
+- Institution: Museum of Fine Arts, Boston (accession 47.1236; scan from the Google Art Project, via Wikimedia Commons)
+- Source: https://commons.wikimedia.org/wiki/File:Albert_Bierstadt_-_Valley_of_the_Yosemite_-_Google_Art_Project.jpg
+- License: Public domain (the painter died in 1902, so the work is in the public domain worldwide)
+- License proof: https://commons.wikimedia.org/wiki/File:Albert_Bierstadt_-_Valley_of_the_Yosemite_-_Google_Art_Project.jpg
+- Edits: cropped to remove the signature and the right edge
+
+### flowers-field-of-gold
+
+- Title: Field of Gold
+- Author and date: Tim Rains, National Park Service (credit "NPS / Tim Rains"), 15 May 2012 (glacier lilies, Glacier National Park, Montana)
+- Institution: National Park Service, Glacier National Park
+- Source: https://www.flickr.com/photos/glaciernps/20725914959 (file via https://commons.wikimedia.org/wiki/File:Field_of_Gold_(20725914959).jpg)
+- License: Public domain (U.S. federal government work, PD-USGov-NPS; Public Domain Mark 1.0 on the park's official Flickr)
+- License proof: https://www.flickr.com/photos/glaciernps/20725914959 , https://commons.wikimedia.org/wiki/File:Field_of_Gold_(20725914959).jpg , https://www.nps.gov/glac/learn/news/media16-40.htm (Rains as the park's media contact)
+
+### mw-starry
+
+- Title: Milky Way and Starry Night Sky
+- Author and date: Jacob W. Frank, National Park Service (credit "NPS / Jacob W. Frank"), 11 August 2015
+- Institution: National Park Service, Natural Resource Stewardship and Science
+- Source: https://www.flickr.com/photos/naturenps/26972689115/ (file via https://commons.wikimedia.org/wiki/File:Milky_Way_and_starry_night_sky_(26972689115).jpg)
+- License: Public domain (U.S. federal government work, PD-USGov-NPS; Public Domain Mark 1.0 on the NPS Natural Resources Flickr)
+- License proof: https://www.flickr.com/photos/naturenps/26972689115/ , https://commons.wikimedia.org/wiki/File:Milky_Way_and_starry_night_sky_(26972689115).jpg
 
 ## Open-Meteo
 
