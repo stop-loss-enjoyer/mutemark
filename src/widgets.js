@@ -240,10 +240,25 @@
     return allZones;
   }
 
+  // Chromium still names some zones the old way, "Europe/Kiev" for Kyiv.
+  // The id stays as the browser gives it, only the shown name is current.
+  const CITY_NAMES = {
+    Kiev: "Kyiv",
+    Calcutta: "Kolkata",
+    Saigon: "Ho Chi Minh",
+    Katmandu: "Kathmandu",
+    Rangoon: "Yangon",
+    Godthab: "Nuuk",
+    Faeroe: "Faroe",
+    Enderbury: "Kanton",
+    Ponape: "Pohnpei",
+    Truk: "Chuuk",
+  };
+
   // "America/Argentina/Buenos_Aires" is "Buenos Aires" in "America/Argentina".
   function zoneCity(zone) {
-    const parts = zone.split("/");
-    return parts.pop().replace(/_/g, " ");
+    const last = zone.split("/").pop();
+    return CITY_NAMES[last] ?? last.replace(/_/g, " ");
   }
 
   function zoneRegion(zone) {
@@ -288,7 +303,7 @@
       const city = document.createElement("span");
       city.className = "z-city";
       city.textContent = zoneCity(zone);
-      city.title = zone.replace(/_/g, " ");
+      city.title = [zoneRegion(zone), zoneCity(zone)].filter(Boolean).join(" / ");
       const { time, period } = timeParts(now, zone);
       const clock = document.createElement("span");
       clock.className = "z-time";
@@ -352,7 +367,7 @@
     for (const zone of zoneList()) {
       if (taken.has(zone)) continue;
       const city = zoneCity(zone).toLowerCase();
-      const name = zone.toLowerCase().replace(/[_/]/g, " ");
+      const name = `${zone.toLowerCase().replace(/[_/]/g, " ")} ${city}`;
       if (!words.every((w) => name.includes(w))) continue;
       // Cities that start with the query first, then the rest in list order.
       scored.push([query && city.startsWith(query) ? 0 : 1, zone]);
