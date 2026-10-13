@@ -1173,23 +1173,53 @@ function globePixels() {
   return globe;
 }
 
+// The same page with "www." added to the host, or taken off it. Chromium's cache is per host,
+// so a bookmark of www.example.com finds nothing when only example.com was visited.
+function otherWwwUrl(pageUrl) {
+  try {
+    const url = new URL(pageUrl);
+    if (url.protocol !== "http:" && url.protocol !== "https:") return null;
+    url.hostname = url.hostname.startsWith("www.") ? url.hostname.slice(4) : `www.${url.hostname}`;
+    return url.toString();
+  } catch {
+    return null;
+  }
+}
+
+// True if the cache has a real icon for the address, not the default globe.
+async function hasIcon(src) {
+  try {
+    return pixelsOf(await decodeImage(src)) !== await globePixels();
+  } catch {
+    return false;
+  }
+}
+
 // A background image reports no errors, so a separate image checks the same icon.
 // The browser takes it from the same local cache, there is no second request.
+// With no icon for the address, the same site with "www." toggled is tried once.
 function watchIcons(root) {
   if (!HAS_FAVICONS) return;
   for (const icon of root.querySelectorAll("[data-src]")) {
     // The address as stored in the bookmark, the same key renderLink looks up.
     const url = icon.closest(".link")?.getAttribute("href");
-    decodeImage(icon.dataset.src).then(async (img) => {
-      const missing = pixelsOf(img) === await globePixels();
-      if (missing) showLetter(icon);
+    (async () => {
+      let found = await hasIcon(icon.dataset.src);
+      if (!found && url) {
+        const other = otherWwwUrl(url);
+        const src = other && faviconUrl(other);
+        if (src && await hasIcon(src)) {
+          found = true;
+          icon.className = "icon";
+          icon.textContent = "";
+          icon.style.backgroundImage = `url("${src}")`;
+        }
+      }
+      if (!found) showLetter(icon);
       // The site has an icon now: it is taken off the list, and the next tab shows
       // the icon. The letter stays on this one, so nothing jumps under the pointer.
-      if (url) rememberNoFav(url, missing);
-    }, () => {
-      showLetter(icon);
-      if (url) rememberNoFav(url, true);
-    });
+      if (url) rememberNoFav(url, !found);
+    })();
   }
 }
 
