@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Mutemark",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Your browser bookmarks as a calm new tab page. No account, no analytics, no servers of ours. Bookmarks never leave the browser.",
   "icons": {
     "16": "icons/icon-16.png",

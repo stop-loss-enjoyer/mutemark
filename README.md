@@ -83,7 +83,7 @@ Download the zip for your browser from the [latest release](https://github.com/s
 
 **Chrome, Brave, Edge** (Vivaldi should work but is untested)
 
-1. Unzip the Chromium package into a new, empty folder with a fixed name that you keep. The zip has no top-level folder, so name the target: `unzip mutemark-chromium-1.1.0.zip -d mutemark`.
+1. Unzip the Chromium package into a new, empty folder with a fixed name that you keep. The zip has no top-level folder, so name the target: `unzip mutemark-chromium-1.2.0.zip -d mutemark`.
 2. Open the browser's extensions page and turn on Developer mode.
 3. Choose Load unpacked and select that folder, the one with `manifest.json` directly inside.
 
