@@ -17,7 +17,7 @@ Mutemark has no account, no analytics, no telemetry, no advertising and no serve
 
 The extension keeps the following in its own `localStorage`, inside your browser profile. Each item is listed with its key.
 
-- `mutemark-settings`: theme, accent color, background (a gallery picture id, gradient, solid or your image, and whether your image is light or dark), start folder, whether the weather widget is on, which other widgets are on, the time zones of the world clocks (London and New York until you choose), units, clock format, whether the first-run hint was closed, and the colors and file name of a theme file if you imported one (not the file itself).
+- `mutemark-settings`: theme, accent color, background (a gallery picture id, gradient, solid or your image, and whether your image is light or dark), start folder, tile labels (site address or bookmark name), whether the weather widget is on, which other widgets are on, the time zones of the world clocks (London and New York until you choose), units, clock format, whether the first-run hint was closed, and the colors and file name of a theme file if you imported one (not the file itself).
 - `mutemark-note`: the text of the note widget. Removed when the note is empty.
 - `mutemark-timer`: the timer's set time, the time left, the moment it ends while running, and whether its chime has played.
 - `mutemark-plan`: layouts of the cards for recent window sizes and start folders (up to eight), as folder ids, columns and sizes.

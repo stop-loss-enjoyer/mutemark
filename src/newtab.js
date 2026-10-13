@@ -743,6 +743,11 @@ function fit(secs) {
 
 /* Rendering */
 
+// Tile labels: the site address (default) or the bookmark's own name.
+function showsAddress() {
+  return settings.tileLabels !== "title";
+}
+
 function letterOf(name) {
   const ch = name.match(/[\p{L}\p{N}]/u);
   return (ch ? ch[0] : "?").toUpperCase();
@@ -756,8 +761,14 @@ function renderLink(bookmark) {
   link.dataset.id = bookmark.id;
 
   const host = hostOf(bookmark.url);
-  const name = decodeEntities(bookmark.title || "").trim() || host;
+  const title = decodeEntities(bookmark.title || "").trim();
+  // In address mode the title is not drawn anywhere, and the letter follows the host.
+  // The title is kept in a data attribute, only for search.
+  const byAddress = showsAddress();
+  const name = byAddress ? host : title || host;
   link.dataset.letter = letterOf(name);
+  if (byAddress && title) link.dataset.title = title;
+  link.dataset.host = host;
 
   // The site icon is a background, not an <img>: while it loads, or if there is none,
   // the spot stays empty instead of showing a broken image.
@@ -784,11 +795,15 @@ function renderLink(bookmark) {
   const nameEl = document.createElement("span");
   nameEl.className = "name";
   nameEl.textContent = name;
-  // The address shows on hover and in search. If there is no room, it wraps to a hidden second line.
-  const hostEl = document.createElement("span");
-  hostEl.className = "host";
-  hostEl.textContent = host;
-  label.append(nameEl, hostEl);
+  label.append(nameEl);
+  // With names shown, the address shows on hover and in search. If there is no room,
+  // it wraps to a hidden second line. In address mode the label is the address already.
+  if (!byAddress) {
+    const hostEl = document.createElement("span");
+    hostEl.className = "host";
+    hostEl.textContent = host;
+    label.append(hostEl);
+  }
 
   link.append(icon, label);
   return link;
@@ -1334,6 +1349,7 @@ function scoreItem(item, q) {
     if (marks) return { score: 45, marks };
   }
   if (item.host.includes(q)) return { score: 35, marks: [] };
+  if (item.title?.includes(q)) return { score: 30, marks: [] };
   if (item.folder.includes(q)) return { score: 20, marks: [] };
   return { score: 0, marks: [] };
 }
@@ -1360,7 +1376,8 @@ function getFindItems() {
       name,
       norm: normalize(name),
       starts: wordStarts(name),
-      host: normalize(link.querySelector(".host")?.textContent ?? ""),
+      host: normalize(link.dataset.host ?? ""),
+      title: link.dataset.title ? normalize(link.dataset.title) : "",
       folder: normalize(link.closest(".card")?.querySelector(".title")?.textContent ?? ""),
     };
   });
@@ -1374,12 +1391,15 @@ const restFields = new WeakMap();
 function restItem(bookmark, section) {
   let item = restFields.get(bookmark);
   if (!item) {
-    const name = decodeEntities(bookmark.title || "").trim() || hostOf(bookmark.url);
+    const host = hostOf(bookmark.url);
+    const title = decodeEntities(bookmark.title || "").trim();
+    const name = showsAddress() ? host : title || host;
     item = {
       name,
       norm: normalize(name),
       starts: wordStarts(name),
-      host: normalize(hostOf(bookmark.url)),
+      host: normalize(host),
+      title: showsAddress() && title ? normalize(title) : "",
       folder: normalize(section.title),
     };
     restFields.set(bookmark, item);
@@ -1758,8 +1778,23 @@ async function finishEdit(save) {
 function renameLink(link) {
   const id = link.dataset.id;
   const nameEl = link.querySelector(".name");
-  const was = nameEl.textContent;
+  // The editor holds the real bookmark title, not the address that may be drawn on the tile.
+  // The title is read from the browser when the editor opens (it may be missing in the
+  // data attribute, or changed in another window). Nothing is written unless it changed.
+  openLinkEditor(link, id, nameEl);
+}
+
+async function openLinkEditor(link, id, nameEl) {
+  let was;
+  try {
+    [{ title: was = "" }] = await api.bookmarks.get(id);
+  } catch {
+    showToast("Could not rename", false);
+    return;
+  }
+  was = decodeEntities(was || "").trim();
   startEdit(nameEl, was, "Bookmark name", async (save, value) => {
+    // An untouched field never writes: the stored title stays exactly as it is.
     if (save && value !== was) await api.bookmarks.update(id, { title: value });
   });
 }
@@ -1823,7 +1858,7 @@ async function deleteLink(id) {
   }
   const entry = { parentId: node.parentId, index: node.index, title: node.title, url: node.url };
   await load();
-  showToast(`Deleted: ${decodeEntities(node.title || "") || hostOf(node.url)}`, async () => {
+  showToast(`Deleted: ${showsAddress() ? hostOf(node.url) : decodeEntities(node.title || "") || hostOf(node.url)}`, async () => {
     try {
       // Other bookmarks may have come or gone meanwhile, and Chromium rejects an index past the end.
       await api.bookmarks.get(entry.parentId);
@@ -2155,7 +2190,7 @@ window.addEventListener("resize", () => {
 /* Settings changed in the panel. */
 
 document.addEventListener("mutemark:settings", ({ detail }) => {
-  if (detail.changed.includes("startFolder")) {
+  if (detail.changed.includes("startFolder") || detail.changed.includes("tileLabels")) {
     load();
     return;
   }

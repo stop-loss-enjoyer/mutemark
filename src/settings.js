@@ -31,6 +31,9 @@ const SETTINGS_SCHEMA = {
   // Time zones of the world clocks, up to three.
   zones: [["Europe/London", "America/New_York"], (v) => Array.isArray(v) &&
     v.length <= MAX_ZONES && v.every((zone, i) => isTimeZone(zone) && v.indexOf(zone) === i)],
+  // What a bookmark tile shows: the site address (default, a title can hold personal data)
+  // or the bookmark's own name.
+  tileLabels: ["host", "host", "title"],
   tempUnit: ["c", "c", "f"],
   windUnit: ["ms", "ms", "kmh", "mph"],
   // "auto" follows the browser's locale until 12 or 24 hours is chosen.

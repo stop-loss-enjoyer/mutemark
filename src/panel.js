@@ -200,6 +200,7 @@ function syncControls() {
     paletteNoteEl.textContent = custom ? `Using colors from ${custom.name}.` : PALETTE_NOTE;
   }
 
+  checkRadio("tileLabels", settings.tileLabels);
   checkRadio("tempUnit", settings.tempUnit);
   checkRadio("windUnit", settings.windUnit);
   // Until one is chosen the clock follows the browser's locale, and that one is shown.
