@@ -307,6 +307,7 @@ All files were resized to 2560 px on the long side, re-encoded as JPEG and strip
 - Source: https://www.metmuseum.org/art/collection/search/11308
 - License: CC0 1.0 Universal Public Domain Dedication (The Met Open Access)
 - License proof: https://www.metmuseum.org/art/collection/search/11308 , https://www.metmuseum.org/openaccess (the collection API marks this object public domain, isPublicDomain true, and serves an Open Access image; the painter died in 1872)
+- Edits: cropped from the museum photograph to remove the black mount around the painting
 
 ### kensett-newport-rocks
 
@@ -334,6 +335,7 @@ All files were resized to 2560 px on the long side, re-encoded as JPEG and strip
 - Source: https://www.metmuseum.org/art/collection/search/10945
 - License: CC0 1.0 Universal Public Domain Dedication (The Met Open Access)
 - License proof: https://www.metmuseum.org/art/collection/search/10945 , https://www.metmuseum.org/openaccess
+- Edits: cropped from the museum photograph to remove the dark edge around the painting
 
 ### twachtman-arques
 
@@ -343,6 +345,7 @@ All files were resized to 2560 px on the long side, re-encoded as JPEG and strip
 - Source: https://www.metmuseum.org/art/collection/search/12842
 - License: CC0 1.0 Universal Public Domain Dedication (The Met Open Access)
 - License proof: https://www.metmuseum.org/art/collection/search/12842 , https://www.metmuseum.org/openaccess
+- Edits: cropped from the museum photograph to remove the frame edge around the painting
 
 ### inness-autumn-meadows
 
@@ -352,6 +355,7 @@ All files were resized to 2560 px on the long side, re-encoded as JPEG and strip
 - Source: https://www.metmuseum.org/art/collection/search/11226
 - License: CC0 1.0 Universal Public Domain Dedication (The Met Open Access)
 - License proof: https://www.metmuseum.org/art/collection/search/11226 , https://www.metmuseum.org/openaccess
+- Edits: cropped from the museum photograph to remove the dark edge around the painting
 
 ### hiroshige-kanbara
 
