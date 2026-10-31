@@ -299,6 +299,117 @@ All files were resized to 2560 px on the long side, re-encoded as JPEG and strip
 - License: Public domain (U.S. federal government work, PD-USGov-NPS; Public Domain Mark 1.0 on the NPS Natural Resources Flickr)
 - License proof: https://www.flickr.com/photos/naturenps/26972689115/ , https://commons.wikimedia.org/wiki/File:Milky_Way_and_starry_night_sky_(26972689115).jpg
 
+### kensett-foggy-sky
+
+- Title: A Foggy Sky
+- Author and date: John Frederick Kensett (died 1872), oil on canvas, 1872
+- Institution: The Metropolitan Museum of Art (Gift of Thomas Kensett, 1874, accession 74.8)
+- Source: https://www.metmuseum.org/art/collection/search/11308
+- License: CC0 1.0 Universal Public Domain Dedication (The Met Open Access)
+- License proof: https://www.metmuseum.org/art/collection/search/11308 , https://www.metmuseum.org/openaccess (the collection API marks this object public domain, isPublicDomain true, and serves an Open Access image; the painter died in 1872)
+
+### kensett-newport-rocks
+
+- Title: Newport Rocks
+- Author and date: John Frederick Kensett (died 1872), oil on canvas, 1872 (Newport, Rhode Island)
+- Institution: The Metropolitan Museum of Art (Gift of Thomas Kensett, 1874, accession 74.6)
+- Source: https://www.metmuseum.org/art/collection/search/11316
+- License: CC0 1.0 Universal Public Domain Dedication (The Met Open Access)
+- License proof: https://www.metmuseum.org/art/collection/search/11316 , https://www.metmuseum.org/openaccess
+
+### kensett-twilight-cedars
+
+- Title: Twilight in the Cedars at Darien, Connecticut (shown in Settings as "Twilight in the Cedars")
+- Author and date: John Frederick Kensett (died 1872), oil on canvas, 1872
+- Institution: The Metropolitan Museum of Art (Gift of Thomas Kensett, 1874, accession 74.4)
+- Source: https://www.metmuseum.org/art/collection/search/11328
+- License: CC0 1.0 Universal Public Domain Dedication (The Met Open Access)
+- License proof: https://www.metmuseum.org/art/collection/search/11328 , https://www.metmuseum.org/openaccess
+
+### gifford-isola-bella
+
+- Title: Isola Bella in Lago Maggiore
+- Author and date: Sanford Robinson Gifford (died 1880), oil on canvas, 1871
+- Institution: The Metropolitan Museum of Art (Gift of Colonel Charles A. Fowler, 1921, accession 21.115.1)
+- Source: https://www.metmuseum.org/art/collection/search/10945
+- License: CC0 1.0 Universal Public Domain Dedication (The Met Open Access)
+- License proof: https://www.metmuseum.org/art/collection/search/10945 , https://www.metmuseum.org/openaccess
+
+### twachtman-arques
+
+- Title: Arques-la-Bataille
+- Author and date: John Henry Twachtman (died 1902), oil on canvas, 1885
+- Institution: The Metropolitan Museum of Art (Morris K. Jesup Fund, 1968, accession 68.52)
+- Source: https://www.metmuseum.org/art/collection/search/12842
+- License: CC0 1.0 Universal Public Domain Dedication (The Met Open Access)
+- License proof: https://www.metmuseum.org/art/collection/search/12842 , https://www.metmuseum.org/openaccess
+
+### inness-autumn-meadows
+
+- Title: Autumn Meadows
+- Author and date: George Inness (died 1894), oil on canvas, 1869
+- Institution: The Metropolitan Museum of Art (Gift of Walter Knight Sturges, 1974, accession 1974.75)
+- Source: https://www.metmuseum.org/art/collection/search/11226
+- License: CC0 1.0 Universal Public Domain Dedication (The Met Open Access)
+- License proof: https://www.metmuseum.org/art/collection/search/11226 , https://www.metmuseum.org/openaccess
+
+### hiroshige-kanbara
+
+- Title: Evening Snow at Kanbara, from the series Fifty-three Stations of the Tokaido (shown in Settings as "Evening Snow at Kanbara")
+- Author and date: Utagawa Hiroshige (died 1858), woodblock print, ink and color on paper, about 1833-34
+- Institution: The Metropolitan Museum of Art (The Howard Mansfield Collection, Purchase, Rogers Fund, 1936, accession JP2492)
+- Source: https://www.metmuseum.org/art/collection/search/56915
+- License: CC0 1.0 Universal Public Domain Dedication (The Met Open Access)
+- License proof: https://www.metmuseum.org/art/collection/search/56915 , https://www.metmuseum.org/openaccess
+- Edits: cropped to the printed image, removing the paper margin around it. The title cartouche and the signature stay.
+
+### whistler-thames
+
+- Title: Nocturne: The Thames at Battersea
+- Author and date: James McNeill Whistler (died 1903), lithotint, 1878
+- Institution: The Metropolitan Museum of Art (Harris Brisbane Dick Fund, 1917, accession 17.3.159)
+- Source: https://www.metmuseum.org/art/collection/search/337702
+- License: CC0 1.0 Universal Public Domain Dedication (The Met Open Access)
+- License proof: https://www.metmuseum.org/art/collection/search/337702 , https://www.metmuseum.org/openaccess
+- Edits: cropped to the printed image, removing the paper mount. The butterfly monogram stays.
+
+### iss-pacific-clouds
+
+- Title: Clouds over the Pacific (ISS034-E-016601)
+- Author and date: NASA, Expedition 34 crew, 4 January 2013 (stratocumulus over the northwestern Pacific Ocean, east of Honshu)
+- Institution: NASA (Johnson Space Center)
+- Source: https://images.nasa.gov/details/iss034e016601
+- License: Public domain (NASA image, PD-USGov-NASA)
+- License proof: https://images.nasa.gov/details/iss034e016601 , https://www.nasa.gov/nasa-brand-center/images-and-media/
+
+### tenere-dunes
+
+- Title: Dunes in the Tenere (ISS022-E-005258, shown in Settings as "Dunes in the Tenere")
+- Author and date: Jeffrey Williams, NASA, Expedition 22 commander, 1 December 2009 (Fachi-Bilma erg, Tenere, Niger)
+- Institution: NASA (Johnson Space Center)
+- Source: https://images.nasa.gov/details/iss022e005258
+- License: Public domain (NASA image, PD-USGov-NASA)
+- License proof: https://images.nasa.gov/details/iss022e005258 , https://www.nasa.gov/nasa-brand-center/images-and-media/
+- Edits: cropped to remove the image id printed on a white bar at the bottom
+
+### dunes-elk
+
+- Title: Elk at the Dunes
+- Author and date: Patrick Myers, National Park Service (credit "NPS/Patrick Myers"), 19 October 2022 (Great Sand Dunes National Park and Preserve; the park's caption dates it 5 November 2022, the camera clock on the file says 19 October 2022)
+- Institution: National Park Service, Great Sand Dunes National Park and Preserve
+- Source: https://www.flickr.com/photos/greatsanddunesnpp/53329715442 (file via https://commons.wikimedia.org/wiki/File:Bull_Elk_in_Front_of_the_Dunes_(53329715442).jpg)
+- License: Public domain (U.S. federal government work, PD-USGov-NPS; Public Domain Mark on the park's official Flickr)
+- License proof: https://commons.wikimedia.org/wiki/File:Bull_Elk_in_Front_of_the_Dunes_(53329715442).jpg , https://www.flickr.com/photos/greatsanddunesnpp/53329715442 , https://www.nps.gov/grsa/planyourvisit/photography.htm (the park credits its photographs "NPS/Patrick Myers"; he is park staff, patrick_myers@nps.gov on https://www.nps.gov/grsa/getinvolved/artist-opportunities.htm)
+
+### dunes-venus
+
+- Title: Venus over the Dunes
+- Author and date: Patrick Myers, National Park Service (credit "NPS/Patrick Myers"), 3 March 2018 (Great Sand Dunes National Park and Preserve)
+- Institution: National Park Service, Great Sand Dunes National Park and Preserve
+- Source: https://www.flickr.com/photos/greatsanddunesnpp/39916414910 (file via https://commons.wikimedia.org/wiki/File:Venus_Over_Dunes_(39916414910).jpg)
+- License: Public domain (U.S. federal government work, PD-USGov-NPS)
+- License proof: https://commons.wikimedia.org/wiki/File:Venus_Over_Dunes_(39916414910).jpg , https://www.nps.gov/grsa/planyourvisit/photography.htm
+
 ## Open-Meteo
 
 Weather data is provided by Open-Meteo (https://open-meteo.com) and is licensed under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/). Mutemark shows an attribution link to Open-Meteo wherever weather is displayed. Open-Meteo is only contacted while the weather widget is on and you have chosen a place (or are searching for one), see PRIVACY.md.
